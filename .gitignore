@@ -7,3 +7,6 @@ firebase-debug.log
 template/
 진행상황.md
 .vercel/
+
+.vercel
+.env*
