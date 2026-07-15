@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>나의 발명 활동지</title>
+<style>
+  @page { size: A4 portrait; margin: 12mm; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: "맑은 고딕", "Malgun Gothic", sans-serif; color: #000; }
+  .page {
+    width: 186mm; height: 273mm;
+    margin: 0 auto; padding: 4mm 0;
+    display: flex; flex-direction: column;
+    page-break-after: always;
+  }
+  .page:last-child { page-break-after: auto; }
+
+  .header {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    border-bottom: 2.5px solid #000; padding-bottom: 3mm; margin-bottom: 4mm;
+  }
+  .header h1 { font-size: 22pt; letter-spacing: 1px; }
+  .header .sub { font-size: 10pt; color: #333; }
+  .idbox { display: flex; gap: 6mm; font-size: 11pt; }
+  .idbox span { border-bottom: 1.5px solid #000; min-width: 30mm; display: inline-block; padding: 0 2mm 1mm; }
+
+  .section { margin-bottom: 4mm; }
+  .q {
+    font-size: 12pt; font-weight: bold;
+    background: #efefef; border: 1.5px solid #000;
+    padding: 2mm 3mm; margin-bottom: 0;
+  }
+  .q small { font-weight: normal; font-size: 9.5pt; color: #444; }
+  .lines { border: 1.5px solid #000; border-top: none; }
+  .lines .line { height: 11mm; border-bottom: 1px dashed #aaa; }
+  .lines .line:last-child { border-bottom: none; }
+
+  .tip {
+    font-size: 9.5pt; color: #333; border: 1px solid #999;
+    padding: 2mm 3mm; margin-top: auto; line-height: 1.5;
+  }
+
+  .drawbox {
+    flex: 1; border: 1.5px solid #000; border-top: none;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .drawbox .hint { color: #bbb; font-size: 11pt; text-align: center; line-height: 1.8; }
+
+  .labeltable { width: 100%; border-collapse: collapse; }
+  .labeltable th, .labeltable td { border: 1.5px solid #000; font-size: 11pt; padding: 0 2mm; }
+  .labeltable th { background: #efefef; height: 8mm; }
+  .labeltable td { height: 10mm; }
+  .labeltable .num { width: 18mm; text-align: center; }
+</style>
+</head>
+<body>
+
+<!-- 1쪽: 글쓰기 (OCR로 읽는 페이지) -->
+<div class="page">
+  <div class="header">
+    <div>
+      <h1>나의 발명 활동지 ①</h1>
+      <div class="sub">또박또박 크게 쓰면 컴퓨터가 잘 읽을 수 있어요.</div>
+    </div>
+    <div class="idbox">학년·반 <span></span> 별명 <span></span></div>
+  </div>
+
+  <div class="section">
+    <div class="q">1. 발명품 이름 <small>— 무엇을 하는 물건인지 드러나게 지어요</small></div>
+    <div class="lines"><div class="line"></div></div>
+  </div>
+
+  <div class="section">
+    <div class="q">2. 어떤 불편함을 발견했나요? <small>— 언제, 어디서, 무엇이 불편했나요?</small></div>
+    <div class="lines"><div class="line"></div><div class="line"></div><div class="line"></div></div>
+  </div>
+
+  <div class="section">
+    <div class="q">3. 어떻게 해결했나요? <small>— 발명품의 생김새와 작동 방법을 자세히 써요</small></div>
+    <div class="lines"><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div></div>
+  </div>
+
+  <div class="section">
+    <div class="q">4. 내 발명품의 좋은 점은? <small>— 쓰기 전과 후, 무엇이 달라지나요?</small></div>
+    <div class="lines"><div class="line"></div><div class="line"></div></div>
+  </div>
+
+  <div class="section">
+    <div class="q">5. 내 발명품에서 가장 중요한 부분은? <small>— 남들이 따라 하면 안 되는 핵심 아이디어</small></div>
+    <div class="lines"><div class="line"></div><div class="line"></div></div>
+  </div>
+
+  <div class="tip">
+    ✏️ 글씨 쓰기 약속 &nbsp;1) 연필보다 <b>검은색 펜</b>이 좋아요 &nbsp;2) 칸의 <b>점선 위에</b> 맞춰 써요 &nbsp;3) 글자를 붙여 쓰지 않아요 &nbsp;4) 틀리면 두 줄로 긋고 다시 써요
+  </div>
+</div>
+
+<!-- 2쪽: 그림 도면 (사진으로 들어가는 페이지) -->
+<div class="page">
+  <div class="header">
+    <div>
+      <h1>나의 발명 활동지 ②</h1>
+      <div class="sub">이 페이지의 그림은 사진으로 찍어 명세서의 [도면]이 됩니다.</div>
+    </div>
+    <div class="idbox">별명 <span></span></div>
+  </div>
+
+  <div class="section" style="flex:1; display:flex; flex-direction:column;">
+    <div class="q">6. 발명품 그리기 <small>— 크고 진하게! 부품마다 ①②③ 번호를 붙여요</small></div>
+    <div class="drawbox">
+      <div class="hint">여기에 발명품을 그려요<br>(앞모습·옆모습 등 여러 방향이면 더 좋아요)</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="q">7. 번호표 <small>— 그림에 붙인 번호가 무엇인지 써요</small></div>
+    <table class="labeltable">
+      <tr><th class="num">번호</th><th>부품 이름</th><th class="num">번호</th><th>부품 이름</th></tr>
+      <tr><td class="num">①</td><td></td><td class="num">④</td><td></td></tr>
+      <tr><td class="num">②</td><td></td><td class="num">⑤</td><td></td></tr>
+      <tr><td class="num">③</td><td></td><td class="num">⑥</td><td></td></tr>
+    </table>
+  </div>
+</div>
+
+</body>
+</html>

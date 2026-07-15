@@ -1,0 +1,9 @@
+.env
+.env.local
+serviceAccountKey.json
+*service*account*.json
+node_modules/
+firebase-debug.log
+template/
+진행상황.md
+.vercel/

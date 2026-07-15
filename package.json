@@ -1,0 +1,13 @@
+{
+  "name": "patent-maker-edu",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "node dev-server.js",
+    "seed": "node scripts/seed.js"
+  },
+  "dependencies": {
+    "firebase-admin": "^13.0.0",
+    "jszip": "^3.10.1"
+  }
+}
