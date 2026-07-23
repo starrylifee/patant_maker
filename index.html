@@ -157,7 +157,9 @@
       <div id="chat">
         <div class="chat-head">🧑‍⚖️ <b>AI 변리사 특허 도우미</b><span id="chatCount"></span></div>
         <div id="msgs">
-          <div class="msg ai">안녕하세요! 저는 특허 도우미예요. 명세서를 쓰다가 막히면 무엇이든 물어보세요. 아래 초록 버튼을 누르면 변리사처럼 깐깐하게 심사해서 100점 만점 점수를 알려 드려요.</div>
+          <div class="msg ai">안녕하세요! 저는 특허 도우미예요. 명세서를 쓰다가 막히면 무엇이든 물어보세요. 아래 초록 버튼을 누르면 변리사처럼 깐깐하게 심사해서 100점 만점 점수를 알려 드려요.
+
+진짜 특허의 기준은 하나예요 — "다른 사람이 내 글만 읽고 발명품을 그대로 만들 수 있을 만큼 명확하고 상세하게!" 점수가 낮아도 괜찮아요. 오늘 한 가지씩 고치면 돼요.</div>
         </div>
         <button id="btnReview">📋 AI 변리사 심사 받기</button>
         <form id="chatForm">
@@ -340,9 +342,9 @@ $('#chatForm').addEventListener('submit', e => {
 });
 const FIELD_KO = { title: '발명의 명칭', problem: '과제', solution: '해결 수단', effect: '효과', core: '청구범위' };
 function gradeOf(total) {
-  if (total >= 80) return '💮 통과예요! 조금만 다듬으면 완성!';
-  if (total >= 60) return '✏️ 조금만 더! 빨간 칸을 고쳐 보아요';
-  return '🔧 아직 부족해요. 하나씩 다시 다듬어요';
+  if (total >= 80) return '💮 통과예요! 진짜 변리사 수준이에요!';
+  if (total >= 60) return '✏️ 좋아요! 오늘은 빨간 칸 한 가지만 고쳐 보아요';
+  return '🔧 시작이 반이에요. 오늘 한 가지만 더 자세히 써 보아요';
 }
 $('#btnReview').addEventListener('click', async () => {
   saveDraft();
@@ -381,6 +383,10 @@ $('#btnReview').addEventListener('click', async () => {
     cmt.className = 'cmt';
     cmt.textContent = r.comment;
     wait.appendChild(cmt);
+    const std = document.createElement('div');
+    std.style.cssText = 'margin-top:8px; font-size:12.5px; color:#889; border-top:1px dashed #d8dee9; padding-top:7px';
+    std.textContent = '📏 심사 기준: 다른 사람이 이 글만 읽고 내 발명품을 그대로 만들 수 있을 만큼 명확하고 상세하게!';
+    wait.appendChild(std);
     $('#msgs').scrollTop = $('#msgs').scrollHeight;
     chatHistory.push(
       { role: 'user', content: '명세서를 심사해 주세요.' },
