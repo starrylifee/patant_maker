@@ -51,9 +51,19 @@
   .labeltable th { background: #efefef; height: 8mm; }
   .labeltable td { height: 10mm; }
   .labeltable .num { width: 18mm; text-align: center; }
+
+  #printBtn {
+    position: fixed; top: 16px; right: 16px; z-index: 10;
+    background: #f5a623; color: #fff; font-family: inherit;
+    font-size: 17px; font-weight: bold; border: none; border-radius: 10px;
+    padding: 12px 22px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,.25);
+  }
+  @media print { #printBtn { display: none; } }
 </style>
 </head>
 <body>
+
+<button id="printBtn" onclick="window.print()">🖨️ 인쇄하기</button>
 
 <!-- 1쪽: 글쓰기 (OCR로 읽는 페이지) -->
 <div class="page">
