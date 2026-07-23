@@ -230,7 +230,7 @@ async function selectCode(code) {
 }
 
 // ---------- 학생 상세 ----------
-const FIELD_NAMES = { title: '발명의 명칭', problem: '배경·해결하려는 과제', solution: '과제의 해결 수단', effect: '발명의 효과', core: '청구범위' };
+const FIELD_NAMES = { title: '발명의 명칭', field: '기술분야', background: '배경이 되는 기술', problem: '해결하려는 과제', solution: '과제의 해결 수단', effect: '발명의 효과', drawingDesc: '도면의 간단한 설명', detail: '실시하기 위한 구체적인 내용', core: '청구범위', abstract: '요약' };
 async function openStudent(sid, nick) {
   $('#mName').textContent = `${nick} 학생의 기록`;
   const s = (window._students || []).find(x => x.sessionId === sid);
@@ -249,8 +249,8 @@ async function openStudent(sid, nick) {
       if (ev.type === 'ocr') return `<div class="ev ocr"><div class="a">📷 활동지 OCR 인식<br><span style="color:#777; font-size:13px">${esc((ev.rawText || '').slice(0, 400))}</span></div><div class="meta">${t}</div></div>`;
       if (ev.type === 'review') {
         const sc = ev.scores || {};
-        const names = { title: '명칭', problem: '과제', solution: '해결', effect: '효과', core: '청구' };
-        const detail = Object.entries(names).map(([k, n]) => `${n} ${sc[k] ?? '-'}`).join(' · ');
+        const names = { title: '명칭', problem: '과제', solution: '해결', effect: '효과', detail: '실시', core: '청구' };
+        const detail = Object.entries(names).filter(([k]) => sc[k] !== undefined).map(([k, n]) => `${n} ${sc[k]}`).join(' · ');
         return `<div class="ev"><div class="a">📋 <b>AI 심사 — 총점 ${ev.total ?? '-'}점</b><br><span style="color:#777; font-size:13px">${esc(detail)}</span><br>${esc(ev.comment || '')}</div><div class="meta">${t}</div></div>`;
       }
       return '';

@@ -64,6 +64,8 @@
   .field label { display: block; font-weight: bold; color: var(--navy); font-size: 16px; margin-bottom: 3px; }
   .field label small { font-weight: normal; color: #888; font-size: 13px; margin-left: 6px; }
   .field textarea { border: none; padding: 6px 2px; resize: none; line-height: 1.6; min-height: 54px; }
+  .field.ai { background: #f5f8ff; border-color: #c9d6f0; }
+  .field.ai label { color: #4a5fa5; }
   #chat { flex: 1; display: flex; flex-direction: column; background: #fff; border-left: 1px solid var(--line); }
   #chat .chat-head { padding: 14px 18px; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 10px; }
   #chat .chat-head b { color: var(--navy); font-size: 17px; }
@@ -148,11 +150,17 @@
     <!-- Step 2 -->
     <div id="step2" class="hidden">
       <div id="editor">
+        <button id="btnDrafts" class="btn-main" style="width:100%; margin-bottom:14px">🪄 AI 초안 채우기 — 기술분야·배경·도면 설명·요약</button>
         <div class="field"><label>【발명의 명칭】<small>발명품 이름</small></label><textarea id="f_title" rows="1"></textarea></div>
-        <div class="field"><label>【발명의 배경과 해결하려는 과제】<small>어떤 불편함이 있었나요?</small></label><textarea id="f_problem" rows="3"></textarea></div>
-        <div class="field"><label>【과제의 해결 수단】<small>어떻게 해결했나요? 생김새와 작동 방법</small></label><textarea id="f_solution" rows="5"></textarea></div>
-        <div class="field"><label>【발명의 효과】<small>내 발명품의 좋은 점</small></label><textarea id="f_effect" rows="3"></textarea></div>
+        <div class="field ai"><label>【기술분야】<small>🪄 AI 초안 — 읽고 내 발명에 맞게 다듬어요</small></label><textarea id="f_field" rows="2"></textarea></div>
+        <div class="field ai"><label>【발명의 배경이 되는 기술】<small>🪄 AI 초안 — 이 발명이 없을 때는 어떻게 했나</small></label><textarea id="f_background" rows="3"></textarea></div>
+        <div class="field"><label>【해결하려는 과제】<small>어떤 불편함을 해결하려고 하나요?</small></label><textarea id="f_problem" rows="3"></textarea></div>
+        <div class="field"><label>【과제의 해결 수단】<small>어떻게 해결했나요? 부품 이름, 붙는 위치, 작동 순서, 무엇의 힘으로 움직이는지</small></label><textarea id="f_solution" rows="5"></textarea></div>
+        <div class="field"><label>【발명의 효과】<small>쓰기 전과 후, 무엇이 달라지나요?</small></label><textarea id="f_effect" rows="3"></textarea></div>
+        <div class="field ai"><label>【도면의 간단한 설명】<small>🪄 AI 초안 — 그림이 무엇을 보여주는지</small></label><textarea id="f_drawingDesc" rows="1"></textarea></div>
+        <div class="field"><label>【발명을 실시하기 위한 구체적인 내용】<small>실제로 만든다면? 재질·크기·만드는 법·사용 순서 (예: 통은 플라스틱, 지름 5cm)</small></label><textarea id="f_detail" rows="4"></textarea></div>
         <div class="field"><label>【청구범위】<small>내 발명에서 보호받고 싶은 핵심 부분 — "~를 포함하는 ○○" 모양으로 써 보아요</small></label><textarea id="f_core" rows="3"></textarea></div>
+        <div class="field ai"><label>【요약】<small>🪄 AI 초안 — 내 발명을 3~4문장으로</small></label><textarea id="f_abstract" rows="3"></textarea></div>
       </div>
       <div id="chat">
         <div class="chat-head">🧑‍⚖️ <b>AI 변리사 특허 도우미</b><span id="chatCount"></span></div>
@@ -286,15 +294,37 @@ $('#btnToEditor').addEventListener('click', () => {
   if (f.core) $('#f_core').value = f.core;
   saveDraft();
   goStep(2);
+  fillDrafts();
 });
 
 // ---------- Step2: 편집 + 자동저장 ----------
+const DRAFT_KEYS = ['title', 'field', 'background', 'problem', 'solution', 'effect', 'drawingDesc', 'detail', 'core', 'abstract'];
 function draft() {
-  return {
-    title: $('#f_title').value, problem: $('#f_problem').value,
-    solution: $('#f_solution').value, effect: $('#f_effect').value, core: $('#f_core').value
-  };
+  const d = {};
+  for (const k of DRAFT_KEYS) d[k] = $('#f_' + k).value;
+  return d;
 }
+
+// AI 형식 항목 초안 — 비어 있는 칸만 채운다
+async function fillDrafts() {
+  const d = draft();
+  if (!d.title.trim() && !d.solution.trim()) return;
+  const targets = ['field', 'background', 'drawingDesc', 'abstract'].filter(k => !d[k].trim());
+  if (!targets.length) return;
+  $('#btnDrafts').disabled = true;
+  $('#btnDrafts').textContent = '🪄 AI가 형식 항목 초안을 쓰고 있어요...';
+  try {
+    const r = await api('draft', { sessionId: session.id, draft: d });
+    for (const k of targets) if (r[k]) $('#f_' + k).value = r[k];
+    saveDraft();
+  } catch (e) {
+    addMsg('sys', e.message);
+  } finally {
+    $('#btnDrafts').disabled = false;
+    $('#btnDrafts').textContent = '🪄 AI 초안 채우기 — 기술분야·배경·도면 설명·요약';
+  }
+}
+$('#btnDrafts').addEventListener('click', fillDrafts);
 let saveTimer = null;
 document.querySelectorAll('#editor textarea').forEach(t => t.addEventListener('input', () => {
   clearTimeout(saveTimer);
@@ -340,7 +370,8 @@ $('#chatForm').addEventListener('submit', e => {
   $('#chatInput').value = '';
   sendChat(v);
 });
-const FIELD_KO = { title: '발명의 명칭', problem: '과제', solution: '해결 수단', effect: '효과', core: '청구범위' };
+const FIELD_KO = { title: '발명의 명칭', problem: '과제', solution: '해결 수단', effect: '효과', detail: '구체적 내용', core: '청구범위' };
+const FIELD_MAX = { title: 10, problem: 15, solution: 25, effect: 15, detail: 15, core: 20 };
 function gradeOf(total) {
   if (total >= 80) return '💮 통과예요! 진짜 변리사 수준이에요!';
   if (total >= 60) return '✏️ 좋아요! 오늘은 빨간 칸 한 가지만 고쳐 보아요';
@@ -362,10 +393,12 @@ $('#btnReview').addEventListener('click', async () => {
     wait.appendChild(totalDiv);
     for (const [k, name] of Object.entries(FIELD_KO)) {
       const pt = r.scores[k] || 0;
+      const max = (r.max && r.max[k]) || FIELD_MAX[k];
+      const pct = Math.round(pt / max * 100);
       const row = document.createElement('div');
       row.className = 'row';
-      const cls = pt >= 14 ? '' : pt >= 8 ? 'mid' : 'low';
-      row.innerHTML = `<span class="nm"></span><span class="bar"><i class="${cls}" style="width:${pt * 5}%"></i></span><span class="pt">${pt}/20</span>`;
+      const cls = pct >= 70 ? '' : pct >= 40 ? 'mid' : 'low';
+      row.innerHTML = `<span class="nm"></span><span class="bar"><i class="${cls}" style="width:${pct}%"></i></span><span class="pt">${pt}/${max}</span>`;
       row.querySelector('.nm').textContent = name;
       wait.appendChild(row);
     }
@@ -390,7 +423,7 @@ $('#btnReview').addEventListener('click', async () => {
     $('#msgs').scrollTop = $('#msgs').scrollHeight;
     chatHistory.push(
       { role: 'user', content: '명세서를 심사해 주세요.' },
-      { role: 'assistant', content: `[심사 결과] 총점 ${r.total}/100 (${Object.entries(FIELD_KO).map(([k, n]) => `${n} ${r.scores[k]}/20`).join(', ')}) — ${r.comment}` }
+      { role: 'assistant', content: `[심사 결과] 총점 ${r.total}/100 (${Object.entries(FIELD_KO).map(([k, n]) => `${n} ${r.scores[k]}/${FIELD_MAX[k]}`).join(', ')}) — ${r.comment}` }
     );
     session.chatUsed = r.used; session.chatLimit = r.limit;
     updateChatCount();

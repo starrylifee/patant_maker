@@ -41,7 +41,7 @@ module.exports = async (req, res) => {
     }
 
     const draftText = draft
-      ? `현재 학생의 명세서 초안:\n발명품 이름: ${draft.title || '(아직 없음)'}\n불편함(과제): ${draft.problem || '(아직 없음)'}\n해결 방법: ${draft.solution || '(아직 없음)'}\n좋은 점(효과): ${draft.effect || '(아직 없음)'}\n핵심 부분(청구항 씨앗): ${draft.core || '(아직 없음)'}`
+      ? `현재 학생의 명세서 초안:\n발명품 이름: ${draft.title || '(아직 없음)'}\n기술분야: ${draft.field || '(아직 없음)'}\n배경이 되는 기술: ${draft.background || '(아직 없음)'}\n불편함(과제): ${draft.problem || '(아직 없음)'}\n해결 방법: ${draft.solution || '(아직 없음)'}\n좋은 점(효과): ${draft.effect || '(아직 없음)'}\n도면의 간단한 설명: ${draft.drawingDesc || '(아직 없음)'}\n실시하기 위한 구체적인 내용(재질·크기·사용 순서): ${draft.detail || '(아직 없음)'}\n핵심 부분(청구항 씨앗): ${draft.core || '(아직 없음)'}\n요약: ${draft.abstract || '(아직 없음)'}`
       : '아직 초안이 없음.';
 
     const messages = [

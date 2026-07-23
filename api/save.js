@@ -7,7 +7,7 @@ module.exports = async (req, res) => {
     if (!sessionId || !draft) return res.status(400).json({ error: 'no draft' });
 
     const clean = {};
-    for (const k of ['title', 'problem', 'solution', 'effect', 'core', 'drawingDesc', 'labels', 'claim']) {
+    for (const k of ['title', 'field', 'background', 'problem', 'solution', 'effect', 'drawingDesc', 'detail', 'core', 'abstract', 'labels', 'claim']) {
       if (typeof draft[k] === 'string') clean[k] = draft[k].slice(0, 3000);
     }
     await db().collection('sessions').doc(sessionId).update({

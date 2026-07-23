@@ -32,20 +32,20 @@ function pPic(pxW, pxH) {
 function buildSection0(prefix, f, drawing) {
   let x = prefix; // <hs:sec ...> + 첫 문단(secPr + 【발명의 설명】)
   x += pHead('【발명의 명칭】') + pBody(f.title);
-  x += pHead('【기술분야】') + pBody(`본 발명은 ${f.title || '생활 속 불편함을 해결하는 발명품'}에 관한 것이다.`);
-  x += pHead('【발명의 배경이 되는 기술】') + pBody(f.problem);
+  x += pHead('【기술분야】') + pBody(f.field || `본 발명은 ${f.title || '생활 속 불편함을 해결하는 발명품'}에 관한 것이다.`);
+  x += pHead('【발명의 배경이 되는 기술】') + pBody(f.background || f.problem);
   x += pHead('【발명의 내용】');
-  x += pHead('【해결하고자 하는 과제】') + pBody('본 발명은 위에서 살펴본 불편함을 해결하는 것을 목적으로 한다.');
+  x += pHead('【해결하려는 과제】') + pBody(f.problem || '본 발명은 위에서 살펴본 불편함을 해결하는 것을 목적으로 한다.');
   x += pHead('【과제의 해결 수단】') + pBody(f.solution);
   x += pHead('【발명의 효과】') + pBody(f.effect);
   if (drawing) {
-    x += pHead('【도면의 간단한 설명】') + pBody('도 1은 본 발명의 전체 모습을 나타낸 그림이다.');
+    x += pHead('【도면의 간단한 설명】') + pBody(f.drawingDesc || '도 1은 본 발명의 전체 모습을 나타낸 그림이다.');
   }
-  x += pHead('【발명을 실시하기 위한 구체적인 내용】') + pBody(f.solution);
+  x += pHead('【발명을 실시하기 위한 구체적인 내용】') + pBody(f.detail || f.solution);
   x += pHead('【청구범위】');
   x += pHead('【청구항 1】') + pBody(f.core);
   x += pHead('【요약서】');
-  x += pHead('【요약】') + pBody(`본 발명은 ${f.title || '발명품'}에 관한 것이다. ${f.effect || ''}`.trim());
+  x += pHead('【요약】') + pBody(f.abstract || `본 발명은 ${f.title || '발명품'}에 관한 것이다. ${f.effect || ''}`.trim());
   if (drawing) {
     x += pHead('【도면】');
     x += pHead('【도 1】');
