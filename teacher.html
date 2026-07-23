@@ -247,6 +247,12 @@ async function openStudent(sid, nick) {
       const t = ev.ts ? new Date(ev.ts).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '';
       if (ev.type === 'chat') return `<div class="ev"><div class="q">${esc(ev.question)}</div><div class="a">${esc(ev.answer)}</div><div class="meta">${t}</div></div>`;
       if (ev.type === 'ocr') return `<div class="ev ocr"><div class="a">📷 활동지 OCR 인식<br><span style="color:#777; font-size:13px">${esc((ev.rawText || '').slice(0, 400))}</span></div><div class="meta">${t}</div></div>`;
+      if (ev.type === 'review') {
+        const sc = ev.scores || {};
+        const names = { title: '명칭', problem: '과제', solution: '해결', effect: '효과', core: '청구' };
+        const detail = Object.entries(names).map(([k, n]) => `${n} ${sc[k] ?? '-'}`).join(' · ');
+        return `<div class="ev"><div class="a">📋 <b>AI 심사 — 총점 ${ev.total ?? '-'}점</b><br><span style="color:#777; font-size:13px">${esc(detail)}</span><br>${esc(ev.comment || '')}</div><div class="meta">${t}</div></div>`;
+      }
       return '';
     }).join('');
   } catch (e) { $('#mLog').innerHTML = `<div class="empty">${e.message}</div>`; }

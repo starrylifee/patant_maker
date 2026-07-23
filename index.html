@@ -77,6 +77,22 @@
   #chatForm button { background: var(--amber); color: #fff; font-weight: bold; padding: 0 20px; font-size: 16px; }
   #btnReview { margin: 0 12px 12px; background: var(--ok); color: #fff; font-size: 16px; font-weight: bold; padding: 11px; }
 
+  /* 심사 결과 카드 */
+  .msg.score { max-width: 96%; background: #fff; border: 2px solid var(--navy2); padding: 14px; }
+  .score .total { text-align: center; margin-bottom: 10px; }
+  .score .total b { font-size: 30px; color: var(--navy); }
+  .score .total .grade { display: block; font-size: 15px; margin-top: 2px; }
+  .score .row { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; font-size: 13.5px; }
+  .score .row .nm { width: 92px; color: #555; flex-shrink: 0; }
+  .score .bar { flex: 1; height: 9px; background: #eef1f6; border-radius: 5px; overflow: hidden; }
+  .score .bar i { display: block; height: 100%; background: var(--ok); border-radius: 5px; }
+  .score .bar i.low { background: #d9534f; }
+  .score .bar i.mid { background: var(--amber); }
+  .score .row .pt { width: 42px; text-align: right; font-weight: bold; color: var(--navy); flex-shrink: 0; }
+  .score .issue { background: #fdf3f2; border-left: 3px solid #d9534f; border-radius: 6px; padding: 8px 10px; margin-top: 8px; font-size: 13.5px; line-height: 1.5; }
+  .score .issue b { color: #b0413e; }
+  .score .cmt { margin-top: 10px; font-size: 14.5px; line-height: 1.55; }
+
   /* Step3 */
   #step3 { height: 100%; display: flex; align-items: center; justify-content: center; gap: 30px; padding: 24px; }
   #drawzone { width: 420px; min-height: 340px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; border: 3px dashed var(--line); cursor: pointer; text-align: center; }
@@ -141,9 +157,9 @@
       <div id="chat">
         <div class="chat-head">🧑‍⚖️ <b>AI 변리사 특허 도우미</b><span id="chatCount"></span></div>
         <div id="msgs">
-          <div class="msg ai">안녕하세요! 저는 특허 도우미예요. 명세서를 쓰다가 막히면 무엇이든 물어보세요. 아래 초록 버튼을 누르면 지금까지 쓴 내용을 점검해 드려요.</div>
+          <div class="msg ai">안녕하세요! 저는 특허 도우미예요. 명세서를 쓰다가 막히면 무엇이든 물어보세요. 아래 초록 버튼을 누르면 변리사처럼 깐깐하게 심사해서 100점 만점 점수를 알려 드려요.</div>
         </div>
-        <button id="btnReview">✅ 지금까지 쓴 명세서 점검받기</button>
+        <button id="btnReview">📋 AI 변리사 심사 받기</button>
         <form id="chatForm">
           <input id="chatInput" placeholder="특허 도우미에게 물어보기" autocomplete="off" maxlength="500">
           <button type="submit">보내기</button>
@@ -321,9 +337,61 @@ $('#chatForm').addEventListener('submit', e => {
   $('#chatInput').value = '';
   sendChat(v);
 });
-$('#btnReview').addEventListener('click', () => {
+const FIELD_KO = { title: '발명의 명칭', problem: '과제', solution: '해결 수단', effect: '효과', core: '청구범위' };
+function gradeOf(total) {
+  if (total >= 80) return '💮 통과예요! 조금만 다듬으면 완성!';
+  if (total >= 60) return '✏️ 조금만 더! 빨간 칸을 고쳐 보아요';
+  return '🔧 아직 부족해요. 하나씩 다시 다듬어요';
+}
+$('#btnReview').addEventListener('click', async () => {
   saveDraft();
-  sendChat('제가 지금까지 쓴 명세서를 점검해 주세요. 부족한 부분을 알려주세요.');
+  $('#btnReview').disabled = true;
+  addMsg('me', '지금까지 쓴 명세서를 심사해 주세요!');
+  const wait = addMsg('ai', '변리사님이 꼼꼼히 읽고 있어요... 🧐');
+  try {
+    const r = await api('review', { sessionId: session.id, draft: draft() });
+    wait.className = 'msg score';
+    wait.textContent = '';
+    const totalDiv = document.createElement('div');
+    totalDiv.className = 'total';
+    totalDiv.innerHTML = `<b>${r.total}점</b> <span style="color:#888">/ 100점</span><span class="grade"></span>`;
+    totalDiv.querySelector('.grade').textContent = gradeOf(r.total);
+    wait.appendChild(totalDiv);
+    for (const [k, name] of Object.entries(FIELD_KO)) {
+      const pt = r.scores[k] || 0;
+      const row = document.createElement('div');
+      row.className = 'row';
+      const cls = pt >= 14 ? '' : pt >= 8 ? 'mid' : 'low';
+      row.innerHTML = `<span class="nm"></span><span class="bar"><i class="${cls}" style="width:${pt * 5}%"></i></span><span class="pt">${pt}/20</span>`;
+      row.querySelector('.nm').textContent = name;
+      wait.appendChild(row);
+    }
+    for (const i of r.issues || []) {
+      const div = document.createElement('div');
+      div.className = 'issue';
+      const where = FIELD_KO[i.field] ? `[${FIELD_KO[i.field]}] ` : '';
+      div.innerHTML = '<b></b><span class="why"></span><br><span class="fx"></span>';
+      div.querySelector('b').textContent = `${where}"${i.quote}" — `;
+      div.querySelector('.why').textContent = i.why;
+      div.querySelector('.fx').textContent = '👉 ' + i.fix;
+      wait.appendChild(div);
+    }
+    const cmt = document.createElement('div');
+    cmt.className = 'cmt';
+    cmt.textContent = r.comment;
+    wait.appendChild(cmt);
+    $('#msgs').scrollTop = $('#msgs').scrollHeight;
+    chatHistory.push(
+      { role: 'user', content: '명세서를 심사해 주세요.' },
+      { role: 'assistant', content: `[심사 결과] 총점 ${r.total}/100 (${Object.entries(FIELD_KO).map(([k, n]) => `${n} ${r.scores[k]}/20`).join(', ')}) — ${r.comment}` }
+    );
+    session.chatUsed = r.used; session.chatLimit = r.limit;
+    updateChatCount();
+  } catch (e) {
+    wait.className = 'msg sys'; wait.textContent = e.message;
+  } finally {
+    $('#btnReview').disabled = false;
+  }
 });
 
 // ---------- Step3: 도면 ----------
