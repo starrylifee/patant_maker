@@ -180,7 +180,8 @@
         <p style="line-height:1.8; color:#555; margin-bottom:18px">②에서 쓴 내용과 그림이 진짜 특허 서류 모양의 <b>한글(HWPX) 파일</b>로 만들어져요.<br>그림 없이도 받을 수 있어요.</p>
         <button id="btnHwpx" class="btn-amber" style="width:100%">📥 한글 파일로 다운로드</button>
         <div id="hwpxMsg" style="font-size:14px; color:#888; margin-top:10px; min-height:20px"></div>
-        <button id="btnOffice" class="btn-main hidden" style="width:100%; margin-top:6px">🏛️ 특허청에 제출하러 가기 (체험)</button>
+        <button id="btnOffice" class="btn-main" style="width:100%; margin-top:6px">🏛️ 특허청에 제출하러 가기 (체험)</button>
+        <div style="font-size:13px; color:#99a; margin-top:6px">선생님이 출원 체험을 열어 주면 들어갈 수 있어요. 명세서가 미완성이어도 체험할 수 있어요.</div>
       </div>
       <input type="file" id="drawInput" accept="image/*" class="hidden">
     </div>
@@ -426,7 +427,6 @@ $('#btnHwpx').addEventListener('click', async () => {
     a.click();
     URL.revokeObjectURL(a.href);
     $('#hwpxMsg').textContent = '다운로드 완료! 한글 프로그램에서 열어보세요. 🎉';
-    $('#btnOffice').classList.remove('hidden');
     saveDraft();
   } catch (err) {
     $('#hwpxMsg').textContent = '만들다가 문제가 생겼어요: ' + err.message;
