@@ -274,7 +274,13 @@ $('#fileInput').addEventListener('change', async e => {
     const r = await api('ocr', { sessionId: session.id, imageBase64: dataUrl });
     const f = r.fields || {};
     const rows = [['발명품 이름', f.title], ['불편했던 점', f.problem], ['해결 방법', f.solution], ['좋은 점', f.effect], ['중요한 부분', f.core]];
-    $('#ocrResult').innerHTML = rows.map(([k, v]) => `<div class="f"><b>${k}</b><br>${v || '<span style="color:#bbb">(못 읽었어요 — 직접 쓰면 돼요)</span>'}</div>`).join('');
+    // 읽힌 내용이 거의 없으면 그림 페이지(활동지 ②)를 올렸을 가능성이 크다
+    const vals = rows.map(([, v]) => (v || '').trim());
+    const wrongPage = vals.filter(v => v).length <= 1 || vals.join('').length < 30;
+    const warn = wrongPage
+      ? '<div style="background:#fff6e3; border:2px solid var(--amber); border-radius:10px; padding:12px 14px; margin-bottom:12px; font-size:16px; line-height:1.5">🤔 글씨를 거의 못 읽었어요.<br><b>혹시 그림 페이지(활동지 ②)를 올리지 않았나요?</b><br>여기에는 <b>글쓰기 페이지(활동지 ①)</b>를 올려 주세요. 그림은 ③단계에서 올려요!</div>'
+      : '';
+    $('#ocrResult').innerHTML = warn + rows.map(([k, v]) => `<div class="f"><b>${k}</b><br>${v || '<span style="color:#bbb">(못 읽었어요 — 직접 쓰면 돼요)</span>'}</div>`).join('');
     $('#ocrStatus').classList.add('hidden');
     $('#ocrResult').classList.remove('hidden');
     $('#btnToEditor').classList.remove('hidden');
