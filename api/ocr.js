@@ -52,12 +52,14 @@ module.exports = async (req, res) => {
     const rawText = await runOcr(buf, key);
     const fields = await structure(rawText, key);
 
-    await db().collection('sessions').doc(sessionId).collection('events').add({
+    const sRef = db().collection('sessions').doc(sessionId);
+    await sRef.collection('events').add({
       type: 'ocr',
       ts: admin.firestore.FieldValue.serverTimestamp(),
       rawText,
       fields: fields || null
     });
+    await sRef.update({ hasOcr: true, lastActive: admin.firestore.FieldValue.serverTimestamp() }).catch(() => {});
 
     return res.status(200).json({ rawText, fields });
   } catch (e) {

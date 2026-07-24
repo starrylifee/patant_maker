@@ -3,10 +3,15 @@ const { db, admin } = require('../lib/firebase');
 module.exports = async (req, res) => {
   if (req.method !== 'POST') return res.status(405).json({ error: 'POST only' });
   try {
-    const { sessionId, draft, idea } = req.body || {};
-    if (!sessionId || (!draft && !idea)) return res.status(400).json({ error: 'no draft' });
+    const { sessionId, draft, idea, flags } = req.body || {};
+    if (!sessionId || (!draft && !idea && !flags)) return res.status(400).json({ error: 'no draft' });
 
     const patch = { lastActive: admin.firestore.FieldValue.serverTimestamp() };
+    if (flags) {
+      for (const k of ['hasDrawing', 'hwpxDone']) {
+        if (flags[k] === true) patch[k] = true;
+      }
+    }
     if (draft) {
       const clean = {};
       for (const k of ['title', 'field', 'background', 'problem', 'solution', 'effect', 'drawingDesc', 'detail', 'core', 'abstract', 'labels', 'claim']) {

@@ -125,6 +125,7 @@ module.exports = async (req, res) => {
     });
     await sRef.update({
       chatCount: admin.firestore.FieldValue.increment(1),
+      lastScore: total,
       lastActive: admin.firestore.FieldValue.serverTimestamp()
     });
 

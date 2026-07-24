@@ -58,7 +58,11 @@ module.exports = async (req, res) => {
         chatCount: d.data().chatCount || 0,
         lastActive: tsToMs(d.data().lastActive),
         draft: d.data().draft || null,
-        idea: d.data().idea || null
+        idea: d.data().idea || null,
+        hasOcr: d.data().hasOcr === true,
+        hasDrawing: d.data().hasDrawing === true,
+        hwpxDone: d.data().hwpxDone === true,
+        lastScore: typeof d.data().lastScore === 'number' ? d.data().lastScore : null
       })).sort((a, b) => (b.lastActive || 0) - (a.lastActive || 0));
       return res.status(200).json({ students });
     }

@@ -792,6 +792,7 @@ $('#drawInput').addEventListener('change', async e => {
   $('#drawPreview').src = drawingDataUrl;
   $('#drawPreview').classList.remove('hidden');
   $('#drawzone .big').classList.add('hidden');
+  api('save', { sessionId: session.id, flags: { hasDrawing: true } }).catch(() => {});
   e.target.value = '';
 });
 
@@ -816,6 +817,7 @@ $('#btnHwpx').addEventListener('click', async () => {
     URL.revokeObjectURL(a.href);
     $('#hwpxMsg').textContent = '다운로드 완료! 한글 프로그램에서 열어보세요. 🎉';
     saveDraft();
+    api('save', { sessionId: session.id, flags: { hwpxDone: true } }).catch(() => {});
   } catch (err) {
     $('#hwpxMsg').textContent = '만들다가 문제가 생겼어요: ' + err.message;
   } finally { $('#btnHwpx').disabled = false; }

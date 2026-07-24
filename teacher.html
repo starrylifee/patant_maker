@@ -61,6 +61,11 @@
   tr.stu:hover { background: #f6f8fd; }
   .empty { color: #99a; text-align: center; padding: 40px 0; font-size: 16px; }
 
+  /* 진행 단계 칩 */
+  .prog { display: flex; flex-wrap: wrap; gap: 4px; }
+  .pstep { font-size: 12.5px; padding: 3px 9px; border-radius: 12px; background: #f0f2f6; color: #a9b0bf; white-space: nowrap; }
+  .pstep.pon { background: #e7f3ec; color: #217141; font-weight: bold; }
+
   /* 학생 상세 모달 */
   #modalWrap { position: fixed; inset: 0; background: rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center; z-index: 50; }
   #modal { background: #fff; border-radius: 14px; width: min(980px, 94vw); height: 86vh; display: flex; flex-direction: column; overflow: hidden; }
@@ -217,9 +222,10 @@ async function selectCode(code) {
   try {
     const { students } = await api('students', { code });
     if (!students.length) { $('#stuBody').innerHTML = '<div class="empty">아직 입장한 학생이 없어요.</div>'; return; }
-    $('#stuBody').innerHTML = `<table><thead><tr><th>별명</th><th>발명품 이름</th><th>AI 질문</th><th>마지막 활동</th></tr></thead><tbody>` +
+    $('#stuBody').innerHTML = `<table><thead><tr><th>별명</th><th>진행 (⓪→③)</th><th>발명품 이름</th><th>AI 질문</th><th>마지막 활동</th></tr></thead><tbody>` +
       students.map(s => `<tr class="stu" data-sid="${s.sessionId}" data-nick="${s.nickname}">
         <td><b>${s.nickname}</b></td>
+        <td>${progChips(s)}</td>
         <td>${(s.draft && s.draft.title) || '<span style="color:#bbb">아직 없음</span>'}</td>
         <td>${s.chatCount}회</td>
         <td>${s.lastActive ? new Date(s.lastActive).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '-'}</td>
@@ -227,6 +233,22 @@ async function selectCode(code) {
     window._students = students;
     document.querySelectorAll('tr.stu').forEach(tr => tr.addEventListener('click', () => openStudent(tr.dataset.sid, tr.dataset.nick)));
   } catch (e) { $('#stuBody').innerHTML = `<div class="empty">${e.message}</div>`; }
+}
+
+// ---------- 진행 단계 칩 (⓪아이디어 ①활동지 ②명세서 ③그림·서류) ----------
+function progChips(s) {
+  const d = s.draft || {};
+  const filled = Object.keys(FIELD_NAMES).filter(k => (d[k] || '').trim()).length;
+  const i = s.idea;
+  const ideaDone = !!(i && (i.problem || (i.basket || []).length || (i.summary && i.summary.name)));
+  const steps = [
+    ['⓪ 아이디어', ideaDone, i && i.summary && i.summary.name ? '✓정리' : ''],
+    ['① 활동지', s.hasOcr, ''],
+    ['② 명세서', filled > 0, filled ? `${filled}/10${s.lastScore != null ? ` · ${s.lastScore}점` : ''}` : ''],
+    ['③ 그림·서류', s.hasDrawing || s.hwpxDone, s.hwpxDone ? '✓한글파일' : '']
+  ];
+  return '<span class="prog">' + steps.map(([nm, on, extra]) =>
+    `<span class="pstep ${on ? 'pon' : 'poff'}">${nm}${extra ? ' ' + extra : ''}</span>`).join('') + '</span>';
 }
 
 // ---------- 학생 상세 ----------
