@@ -40,6 +40,42 @@
   .steps button.on { background: var(--amber); color: #fff; font-weight: bold; }
   main { flex: 1; overflow: hidden; }
 
+  /* Step0 아이디어 공작소 */
+  #step0 { height: 100%; display: flex; flex-direction: column; }
+  .idea-head { display: flex; gap: 8px; align-items: center; padding: 12px 24px 0; }
+  .ichip { background: #fff; border: 2px solid var(--line); color: #667; font-size: 15.5px; font-weight: bold; padding: 9px 18px; border-radius: 22px; }
+  .ichip.on { border-color: var(--amber); background: #fff6e3; color: #8a6d1d; }
+  #btnSkipIdea { margin-left: auto; background: transparent; color: #889; font-size: 14px; text-decoration: underline; }
+  .ipage { flex: 1; overflow-y: auto; display: flex; align-items: center; justify-content: center; gap: 22px; padding: 14px 24px 20px; }
+  .ipage h3 { color: var(--navy); font-size: 20px; margin-bottom: 6px; }
+  .ipage .desc { color: #666; font-size: 15px; margin-bottom: 12px; line-height: 1.6; }
+  .pchips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+  .pchips button { background: #f0f3f9; color: var(--navy2); font-size: 16px; padding: 9px 15px; border-radius: 20px; border: 2px solid transparent; }
+  .pchips button.on { border-color: var(--navy2); background: #e6ecf8; font-weight: bold; }
+  #placeHint { min-height: 24px; color: #8a6d1d; background: #fff6e3; border-radius: 8px; padding: 9px 12px; font-size: 15px; margin-bottom: 12px; line-height: 1.5; }
+  .ilabel { display: block; font-weight: bold; color: var(--navy); margin: 12px 0 6px; }
+  .scards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .scard { background: #fff; border: 2px solid var(--line); border-radius: 12px; padding: 12px 6px; text-align: center; }
+  .scard .em { font-size: 28px; }
+  .scard b { display: block; font-size: 14.5px; color: var(--navy); margin-top: 4px; }
+  .scard.on { border-color: var(--amber); background: #fff6e3; }
+  #coachReply { background: #f0f3f9; border-radius: 12px; padding: 11px 14px; font-size: 15px; line-height: 1.6; margin-top: 10px; white-space: pre-wrap; }
+  #basket { display: flex; flex-wrap: wrap; gap: 8px; }
+  .bchip { background: #e7f3ec; color: #217141; border-radius: 18px; padding: 7px 12px; font-size: 14px; display: flex; align-items: center; gap: 6px; max-width: 100%; }
+  .bchip button { background: transparent; color: #217141; font-size: 15px; padding: 0; }
+  .pick { border: 2px solid var(--line); border-radius: 12px; padding: 11px 14px; margin-bottom: 9px; cursor: pointer; font-size: 15px; line-height: 1.5; }
+  .pick.on { border-color: var(--ok); background: #e7f3ec; }
+  .pick small { color: #889; }
+  .stars { display: flex; align-items: center; gap: 6px; margin-bottom: 7px; font-size: 15.5px; }
+  .stars .nm { width: 170px; color: #555; flex-shrink: 0; }
+  .stars button { background: transparent; font-size: 23px; padding: 0 2px; filter: grayscale(1); }
+  .stars button.on { filter: none; }
+  #ideaResult .ri { margin-bottom: 10px; }
+  #ideaResult .ri b { color: var(--navy); display: block; font-size: 15px; margin-bottom: 2px; }
+  #ideaResult .ri p { font-size: 16px; line-height: 1.55; }
+  #ideaResult .cheer { background: #e7f3ec; color: #217141; border-radius: 10px; padding: 10px 12px; font-size: 15px; line-height: 1.55; margin-top: 4px; }
+  #ideaResult .next { font-size: 14.5px; color: #8a6d1d; background: #fff6e3; border-radius: 10px; padding: 10px 12px; margin-top: 10px; line-height: 1.55; }
+
   /* Step1 업로드 */
   #step1 { height: 100%; display: flex; align-items: center; justify-content: center; gap: 30px; padding: 24px; }
   .panel { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 26px; }
@@ -123,15 +159,89 @@
   <header>
     <div class="logo">💡 특허 명세서 메이커</div>
     <nav class="steps">
-      <button data-step="1" class="on">① 활동지 올리기</button>
+      <button data-step="0" class="on">⓪ 아이디어 만들기</button>
+      <button data-step="1">① 활동지 올리기</button>
       <button data-step="2">② 명세서 완성하기</button>
       <button data-step="3">③ 발명품 그림</button>
     </nav>
     <div class="who" id="who"></div>
   </header>
   <main>
+    <!-- Step 0: 아이디어 공작소 -->
+    <div id="step0">
+      <div class="idea-head">
+        <button class="ichip on" data-i="1">1️⃣ 불편함 찾기</button>
+        <button class="ichip" data-i="2">2️⃣ 아이디어 뽑기</button>
+        <button class="ichip" data-i="3">3️⃣ 고르고 정리하기</button>
+        <button id="btnSkipIdea">이미 발명 아이디어가 있어요 → ① 활동지 올리기로</button>
+      </div>
+
+      <!-- 0-1 불편함 찾기 -->
+      <div id="idea1" class="ipage">
+        <div class="panel" style="width:880px">
+          <h3>😣 발명은 불편함에서 시작해요</h3>
+          <p class="desc">어디에서 불편한 게 많았는지 눌러 보세요. 힌트가 나와요.</p>
+          <div class="pchips" id="places"></div>
+          <div id="placeHint">👆 위에서 장소를 골라 보세요.</div>
+          <label class="ilabel">언제, 무엇이 불편했나요? (언제 · 어디서 · 무엇이 · 왜)</label>
+          <textarea id="ideaProblem" rows="3" placeholder="예: 급식 시간에 국이 식판에서 흘러서 옷에 자꾸 묻는다"></textarea>
+          <button id="btnI2" class="btn-amber" style="margin-top:14px; width:100%">다음 → 아이디어 뽑기 2️⃣</button>
+        </div>
+      </div>
+
+      <!-- 0-2 아이디어 뽑기 -->
+      <div id="idea2" class="ipage hidden">
+        <div class="panel" style="width:440px">
+          <h3>🃏 발명 카드 8장</h3>
+          <p class="desc">카드를 골라서 질문에 답해 보세요.<br>내 불편함: <b id="myProblem" style="color:var(--navy)"></b></p>
+          <div class="scards" id="scards"></div>
+        </div>
+        <div class="panel" style="width:520px; display:flex; flex-direction:column">
+          <div id="workEmpty" style="color:#888; text-align:center; padding:44px 0; line-height:1.7">👈 왼쪽에서 카드를 골라 보세요!<br>카드마다 아이디어를 떠올리는 질문이 있어요.</div>
+          <div id="work" class="hidden">
+            <h3 id="wTitle"></h3>
+            <div class="desc" id="wQ"></div>
+            <div id="wRandom" class="hidden" style="text-align:center; margin-bottom:10px">
+              <div id="wPair" style="font-size:24px; font-weight:bold; color:var(--navy); margin-bottom:8px"></div>
+              <button id="btnRoll" class="btn-main" style="font-size:15px; padding:8px 16px">🎲 다시 뽑기</button>
+            </div>
+            <textarea id="wAnswer" rows="3" placeholder="떠오른 아이디어를 써 보세요"></textarea>
+            <div style="display:flex; gap:8px; margin-top:10px">
+              <button id="btnCoach" class="btn-main" style="flex:1; font-size:16px; padding:11px 8px">🤖 AI 코치에게 물어보기</button>
+              <button id="btnKeep" class="btn-amber" style="flex:1; font-size:16px; padding:11px 8px">🧺 아이디어 담기</button>
+            </div>
+            <div id="coachCount" style="font-size:13px; color:#889; margin-top:6px"></div>
+            <div id="coachReply" class="hidden"></div>
+          </div>
+          <b class="ilabel">🧺 내가 담은 아이디어 <span id="basketN" style="color:#889; font-weight:normal"></span></b>
+          <div id="basket"><span style="color:#bbb; font-size:14px">아직 없어요 — 5개까지 담을 수 있어요</span></div>
+          <button id="btnTo3" class="btn-amber hidden" style="margin-top:12px; width:100%">다음 → 고르고 정리하기 3️⃣</button>
+        </div>
+      </div>
+
+      <!-- 0-3 고르고 정리하기 -->
+      <div id="idea3" class="ipage hidden">
+        <div class="panel" style="width:470px">
+          <h3>🏆 최고의 아이디어 고르기</h3>
+          <p class="desc">담은 아이디어 중 최고를 하나 고르고 별점을 매겨요.</p>
+          <div id="pickList"></div>
+          <b class="ilabel">별점 매기기</b>
+          <div class="stars" data-s="fresh"><span class="nm">✨ 새로운 아이디어야?</span></div>
+          <div class="stars" data-s="make"><span class="nm">🔧 진짜 만들 수 있어?</span></div>
+          <div class="stars" data-s="help"><span class="nm">💚 사람들에게 도움 돼?</span></div>
+          <button id="btnOrganize" class="btn-amber" style="width:100%; margin-top:10px">🤖 AI 코치와 최종 정리하기</button>
+          <div id="orgMsg" style="font-size:14px; color:#889; margin-top:8px; min-height:20px"></div>
+        </div>
+        <div class="panel" style="width:470px">
+          <h3>📋 나의 발명 아이디어</h3>
+          <div id="resultEmpty" style="color:#888; padding:36px 0; text-align:center; line-height:1.8">아이디어를 고르고 별점을 매긴 뒤<br><b>AI 코치와 최종 정리하기</b>를 누르면<br>여기에 정리돼요.</div>
+          <div id="ideaResult" class="hidden"></div>
+        </div>
+      </div>
+    </div>
+
     <!-- Step 1 -->
-    <div id="step1">
+    <div id="step1" class="hidden">
       <div class="panel" id="dropzone">
         <div class="big">📷</div>
         <b style="font-size:19px">활동지 ①(글쓰기) 사진 올리기</b>
@@ -239,7 +349,7 @@ async function api(name, body) {
 
 function goStep(n) {
   document.querySelectorAll('.steps button').forEach(b => b.classList.toggle('on', b.dataset.step == n));
-  [1, 2, 3].forEach(i => $('#step' + i).classList.toggle('hidden', i != n));
+  [0, 1, 2, 3].forEach(i => $('#step' + i).classList.toggle('hidden', i != n));
 }
 document.querySelectorAll('.steps button').forEach(b => b.addEventListener('click', () => goStep(b.dataset.step)));
 
@@ -256,6 +366,200 @@ function compress(file, maxSide = 1600) {
     img.src = URL.createObjectURL(file);
   });
 }
+
+// ---------- Step0: 아이디어 공작소 ----------
+const PLACES = {
+  '교실': '책상 서랍이 뒤죽박죽이야? 의자 끌 때 소리가 시끄러워? 사물함이 좁아서 안 들어가?',
+  '급식실': '국물이 흘러서 옷에 묻어? 식판이 무겁고 뜨거워? 수저가 자꾸 바닥에 떨어져?',
+  '집': '리모컨이 자꾸 없어져? 양말이 짝짝이가 돼? 충전선이 엉켜?',
+  '길·버스': '우산을 써도 가방이 젖어? 버스 손잡이가 너무 높아? 횡단보도에서 심심해?',
+  '운동장': '공이 자꾸 담 밖으로 나가? 줄넘기가 꼬여? 모래가 신발에 들어가?',
+  '가방 속': '물통이 새서 책이 젖어? 필통이 너무 뚱뚱해? 준비물을 자꾸 빠뜨려?',
+  '화장실': '비누가 미끌미끌 자꾸 떨어져? 휴지가 떨어진 걸 몰랐어?',
+  '공부할 때': '지우개 가루가 지저분해? 책이 자꾸 접혀서 안 펴져? 연필이 굴러떨어져?'
+};
+const CARDS = [
+  { k: 'S', name: '대체하기', em: '🔄', q: '재료나 부품을 다른 것으로 바꾸면 어떨까?', ex: '플라스틱 빨대 → 종이 빨대' },
+  { k: 'C', name: '합치기', em: '➕', q: '두 가지 물건을 하나로 합치면 어떨까?', ex: '연필 + 지우개 = 지우개 달린 연필' },
+  { k: 'A', name: '가져오기', em: '💡', q: '자연이나 다른 곳에서 본 아이디어를 가져오면 어떨까?', ex: '옷에 붙는 도꼬마리 열매 → 찍찍이(벨크로)' },
+  { k: 'M', name: '바꾸기', em: '📏', q: '크기·모양·색깔을 바꾸면 어떨까? 아주 크게, 아주 작게!', ex: '긴 우산 → 가방에 쏙 들어가는 접이식 우산' },
+  { k: 'P', name: '다르게 쓰기', em: '🎭', q: '원래 쓰임새 말고 완전히 다른 데 쓰면 어떨까?', ex: '폐타이어 → 놀이터 바닥' },
+  { k: 'E', name: '빼기', em: '✂️', q: '무언가를 빼거나 없애면 어떨까?', ex: '이어폰에서 줄 빼기 → 무선 이어폰' },
+  { k: 'R', name: '뒤집기', em: '🙃', q: '거꾸로 뒤집거나 순서를 바꾸면 어떨까?', ex: '케첩 병을 거꾸로 → 뚜껑이 아래인 케첩 병' },
+  { k: 'X', name: '랜덤 결합', em: '🎲', q: '무작위로 나온 두 물건을 합치면 무엇이 될까?', ex: '' }
+];
+const RANDOM_ITEMS = ['우산', '물통', '필통', '신발', '시계', '가방', '칫솔', '컵', '의자', '베개', '거울', '자석', '지우개', '줄넘기', '모자', '장갑', '책갈피', '열쇠', '빨대', '선풍기', '손전등', '머리끈', '도시락', '슬리퍼'];
+let idea = { place: '', problem: '', basket: [], best: -1, stars: { fresh: 0, make: 0, help: 0 }, summary: null };
+let curCard = null, curPair = null;
+
+function goIdea(n) {
+  document.querySelectorAll('.ichip').forEach(b => b.classList.toggle('on', b.dataset.i == n));
+  [1, 2, 3].forEach(i => $('#idea' + i).classList.toggle('hidden', i != n));
+  if (n == 2) $('#myProblem').textContent = idea.problem || '(아직 안 씀)';
+  if (n == 3) renderPicks();
+}
+document.querySelectorAll('.ichip').forEach(b => b.addEventListener('click', () => goIdea(b.dataset.i)));
+$('#btnSkipIdea').addEventListener('click', () => goStep(1));
+
+let ideaSaveTimer = null;
+function saveIdea() {
+  clearTimeout(ideaSaveTimer);
+  ideaSaveTimer = setTimeout(() => { if (session) api('save', { sessionId: session.id, idea }).catch(() => {}); }, 1200);
+}
+
+// 0-1 불편함
+$('#places').innerHTML = Object.keys(PLACES).map(p => `<button data-p="${p}">${p}</button>`).join('');
+document.querySelectorAll('#places button').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('#places button').forEach(x => x.classList.toggle('on', x === b));
+  idea.place = b.dataset.p;
+  $('#placeHint').textContent = '💭 ' + PLACES[b.dataset.p];
+  $('#ideaProblem').focus();
+  saveIdea();
+}));
+$('#ideaProblem').addEventListener('input', () => { idea.problem = $('#ideaProblem').value; saveIdea(); });
+$('#btnI2').addEventListener('click', () => {
+  if ($('#ideaProblem').value.trim().length < 5) { $('#ideaProblem').focus(); $('#ideaProblem').placeholder = '불편했던 순간을 한 문장이라도 써 보세요!'; return; }
+  goIdea(2);
+});
+
+// 0-2 카드
+$('#scards').innerHTML = CARDS.map((c, i) => `<button class="scard" data-i="${i}"><span class="em">${c.em}</span><b>${c.name}</b></button>`).join('');
+document.querySelectorAll('.scard').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.scard').forEach(x => x.classList.toggle('on', x === b));
+  curCard = CARDS[+b.dataset.i];
+  $('#workEmpty').classList.add('hidden');
+  $('#work').classList.remove('hidden');
+  $('#wTitle').textContent = `${curCard.em} ${curCard.name}`;
+  $('#wQ').innerHTML = curCard.ex ? `${curCard.q}<br><span style="color:#8a6d1d">예: ${curCard.ex}</span>` : curCard.q;
+  $('#wRandom').classList.toggle('hidden', curCard.k !== 'X');
+  if (curCard.k === 'X' && !curPair) rollPair();
+  $('#coachReply').classList.add('hidden');
+  updateCoachCount();
+  $('#wAnswer').focus();
+}));
+function rollPair() {
+  const a = RANDOM_ITEMS[Math.floor(Math.random() * RANDOM_ITEMS.length)];
+  let b = a;
+  while (b === a) b = RANDOM_ITEMS[Math.floor(Math.random() * RANDOM_ITEMS.length)];
+  curPair = [a, b];
+  $('#wPair').textContent = `${a}  ✕  ${b}`;
+}
+$('#btnRoll').addEventListener('click', rollPair);
+function toolLabel() {
+  if (!curCard) return '';
+  return curCard.k === 'X' && curPair ? `랜덤 결합(${curPair[0]}✕${curPair[1]})` : curCard.name;
+}
+function updateCoachCount() {
+  if (session) $('#coachCount').textContent = `남은 AI 질문 ${session.chatLimit - session.chatUsed}번`;
+}
+$('#btnCoach').addEventListener('click', async () => {
+  const text = $('#wAnswer').value.trim();
+  if (text.length < 2) { $('#wAnswer').focus(); $('#wAnswer').placeholder = '아이디어를 한 줄이라도 쓰면 AI 코치가 도와줘요!'; return; }
+  $('#btnCoach').disabled = true;
+  $('#coachReply').classList.remove('hidden');
+  $('#coachReply').textContent = 'AI 코치가 생각 중이에요... 🤔';
+  try {
+    const r = await api('idea', { sessionId: session.id, action: 'coach', problem: idea.problem, technique: toolLabel(), ideaText: text });
+    $('#coachReply').textContent = '🤖 ' + r.reply;
+    session.chatUsed = r.used; session.chatLimit = r.limit;
+    updateCoachCount(); updateChatCount();
+  } catch (e) {
+    $('#coachReply').textContent = e.message;
+  } finally { $('#btnCoach').disabled = false; }
+});
+$('#btnKeep').addEventListener('click', () => {
+  const text = $('#wAnswer').value.trim();
+  if (text.length < 2) { $('#wAnswer').focus(); return; }
+  if (idea.basket.length >= 5) { alert('아이디어는 5개까지만 담을 수 있어요. 하나를 지우고 담아 보세요.'); return; }
+  idea.basket.push({ tool: toolLabel(), text });
+  $('#wAnswer').value = '';
+  $('#coachReply').classList.add('hidden');
+  renderBasket(); saveIdea();
+});
+function renderBasket() {
+  const bk = $('#basket');
+  if (!idea.basket.length) { bk.innerHTML = '<span style="color:#bbb; font-size:14px">아직 없어요 — 5개까지 담을 수 있어요</span>'; }
+  else {
+    bk.innerHTML = '';
+    idea.basket.forEach((b, i) => {
+      const d = document.createElement('div');
+      d.className = 'bchip';
+      const s = document.createElement('span');
+      s.textContent = `${b.tool} · ${b.text.length > 22 ? b.text.slice(0, 22) + '…' : b.text}`;
+      const x = document.createElement('button');
+      x.textContent = '✕';
+      x.addEventListener('click', () => { idea.basket.splice(i, 1); if (idea.best >= idea.basket.length) idea.best = -1; renderBasket(); saveIdea(); });
+      d.append(s, x); bk.appendChild(d);
+    });
+  }
+  $('#basketN').textContent = `(${idea.basket.length}/5)`;
+  $('#btnTo3').classList.toggle('hidden', !idea.basket.length);
+}
+$('#btnTo3').addEventListener('click', () => goIdea(3));
+
+// 0-3 고르기·별점·정리
+function renderPicks() {
+  const pl = $('#pickList');
+  if (!idea.basket.length) { pl.innerHTML = '<div style="color:#888; padding:16px 0">2️⃣에서 아이디어를 먼저 담아 오세요!</div>'; return; }
+  pl.innerHTML = '';
+  idea.basket.forEach((b, i) => {
+    const d = document.createElement('div');
+    d.className = 'pick' + (idea.best === i ? ' on' : '');
+    d.innerHTML = `<small></small><br>`;
+    d.querySelector('small').textContent = (idea.best === i ? '🏆 ' : '') + b.tool;
+    d.appendChild(document.createTextNode(b.text));
+    d.addEventListener('click', () => { idea.best = i; renderPicks(); saveIdea(); });
+    pl.appendChild(d);
+  });
+}
+document.querySelectorAll('.stars').forEach(row => {
+  const key = row.dataset.s;
+  for (let v = 1; v <= 5; v++) {
+    const b = document.createElement('button');
+    b.textContent = '⭐';
+    b.addEventListener('click', () => { idea.stars[key] = v; paintStars(); saveIdea(); });
+    row.appendChild(b);
+  }
+});
+function paintStars() {
+  document.querySelectorAll('.stars').forEach(row => {
+    const v = idea.stars[row.dataset.s] || 0;
+    row.querySelectorAll('button').forEach((b, i) => b.classList.toggle('on', i < v));
+  });
+}
+$('#btnOrganize').addEventListener('click', async () => {
+  if (idea.best < 0 || !idea.basket[idea.best]) { $('#orgMsg').textContent = '먼저 위에서 최고의 아이디어를 하나 골라 주세요!'; return; }
+  if (!idea.stars.fresh || !idea.stars.make || !idea.stars.help) { $('#orgMsg').textContent = '별점 세 줄을 모두 매겨 주세요!'; return; }
+  $('#btnOrganize').disabled = true;
+  $('#orgMsg').textContent = 'AI 코치가 아이디어를 정리하고 있어요...';
+  try {
+    const r = await api('idea', { sessionId: session.id, action: 'organize', problem: idea.problem, chosen: idea.basket[idea.best] });
+    idea.summary = { name: r.name, problem: r.problem, solution: r.solution, effect: r.effect };
+    saveIdea();
+    $('#resultEmpty').classList.add('hidden');
+    const box = $('#ideaResult');
+    box.classList.remove('hidden');
+    box.innerHTML = '';
+    for (const [label, val] of [['💡 발명품 이름 후보', r.name], ['😣 어떤 불편함을 해결하나요?', r.problem], ['🔧 어떻게 해결하나요?', r.solution], ['✨ 좋은 점은?', r.effect]]) {
+      const d = document.createElement('div');
+      d.className = 'ri';
+      d.innerHTML = '<b></b><p></p>';
+      d.querySelector('b').textContent = label;
+      d.querySelector('p').textContent = val;
+      box.appendChild(d);
+    }
+    const ch = document.createElement('div');
+    ch.className = 'cheer'; ch.textContent = '🤖 ' + (r.cheer || '');
+    box.appendChild(ch);
+    const nx = document.createElement('div');
+    nx.className = 'next';
+    nx.innerHTML = '✏️ 이 내용을 <b>발명 활동지에 내 글씨로</b> 옮겨 적고 그림도 그려 보세요.<br>활동지를 다 쓰면 위의 <b>① 활동지 올리기</b>로 가요!';
+    box.appendChild(nx);
+    $('#orgMsg').textContent = '';
+  } catch (e) {
+    $('#orgMsg').textContent = e.message;
+  } finally { $('#btnOrganize').disabled = false; }
+});
 
 // ---------- Step1: OCR ----------
 $('#dropzone').addEventListener('click', () => $('#fileInput').click());

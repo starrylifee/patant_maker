@@ -57,7 +57,8 @@ module.exports = async (req, res) => {
         nickname: d.data().nickname,
         chatCount: d.data().chatCount || 0,
         lastActive: tsToMs(d.data().lastActive),
-        draft: d.data().draft || null
+        draft: d.data().draft || null,
+        idea: d.data().idea || null
       })).sort((a, b) => (b.lastActive || 0) - (a.lastActive || 0));
       return res.status(200).json({ students });
     }

@@ -235,7 +235,20 @@ async function openStudent(sid, nick) {
   $('#mName').textContent = `${nick} 학생의 기록`;
   const s = (window._students || []).find(x => x.sessionId === sid);
   const d = (s && s.draft) || {};
-  $('#mDraft').innerHTML = '<h3 style="color:var(--navy); margin-bottom:12px">📝 명세서 초안</h3>' +
+  const i = (s && s.idea) || null;
+  let ideaHtml = '';
+  if (i && (i.problem || (i.basket || []).length)) {
+    const stars = i.stars || {};
+    const star = n => '⭐'.repeat(n || 0) || '-';
+    ideaHtml = '<h3 style="color:var(--navy); margin-bottom:12px">💡 아이디어 공작소</h3>' +
+      `<div class="d-item"><b>불편함${i.place ? ` (${esc(i.place)})` : ''}</b><p class="${i.problem ? '' : 'none'}">${esc(i.problem || '(아직 안 씀)')}</p></div>` +
+      `<div class="d-item"><b>담은 아이디어 ${(i.basket || []).length}개</b>` +
+      ((i.basket || []).map((b, n) => `<p>${i.best === n ? '🏆 ' : ''}[${esc(b.tool)}] ${esc(b.text)}</p>`).join('') || '<p class="none">(없음)</p>') + '</div>' +
+      `<div class="d-item"><b>별점</b><p>새로움 ${star(stars.fresh)} · 실현 ${star(stars.make)} · 도움 ${star(stars.help)}</p></div>` +
+      (i.summary ? `<div class="d-item"><b>최종 정리</b><p>이름 후보: ${esc(i.summary.name)}\n불편함: ${esc(i.summary.problem)}\n해결: ${esc(i.summary.solution)}\n좋은 점: ${esc(i.summary.effect)}</p></div>` : '') +
+      '<hr style="border:none; border-top:1px dashed var(--line); margin:14px 0">';
+  }
+  $('#mDraft').innerHTML = ideaHtml + '<h3 style="color:var(--navy); margin-bottom:12px">📝 명세서 초안</h3>' +
     Object.entries(FIELD_NAMES).map(([k, name]) =>
       `<div class="d-item"><b>${name}</b><p class="${d[k] ? '' : 'none'}">${d[k] || '(아직 안 씀)'}</p></div>`).join('');
   $('#mLog').innerHTML = '<div class="empty">기록 불러오는 중...</div>';
@@ -246,6 +259,7 @@ async function openStudent(sid, nick) {
     $('#mLog').innerHTML = '<h3 style="color:var(--navy); margin-bottom:12px">🤖 AI 사용 기록 (전체)</h3>' + events.map(ev => {
       const t = ev.ts ? new Date(ev.ts).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '';
       if (ev.type === 'chat') return `<div class="ev"><div class="q">${esc(ev.question)}</div><div class="a">${esc(ev.answer)}</div><div class="meta">${t}</div></div>`;
+      if (ev.type === 'idea') return `<div class="ev"><div class="q">💡 ${esc(ev.question)}</div><div class="a">${esc(ev.answer)}</div><div class="meta">${t} · 아이디어 공작소</div></div>`;
       if (ev.type === 'ocr') return `<div class="ev ocr"><div class="a">📷 활동지 OCR 인식<br><span style="color:#777; font-size:13px">${esc((ev.rawText || '').slice(0, 400))}</span></div><div class="meta">${t}</div></div>`;
       if (ev.type === 'review') {
         const sc = ev.scores || {};
