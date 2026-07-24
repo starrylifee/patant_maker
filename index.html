@@ -535,23 +535,6 @@ $('#btnOrganize').addEventListener('click', async () => {
   $('#orgMsg').textContent = 'AI 코치가 아이디어를 정리하고 있어요...';
   try {
     const r = await api('idea', { sessionId: session.id, action: 'organize', problem: idea.problem, chosen: idea.basket[idea.best] });
-    if (r.ok === false) {
-      // 아이디어가 아직 막연함 — 정리 대신 코치의 조언을 보여주고 2단계로 유도
-      $('#resultEmpty').classList.add('hidden');
-      const box = $('#ideaResult');
-      box.classList.remove('hidden');
-      box.innerHTML = '<div class="ri"><b>🤔 아직 정리하기엔 아이디어가 부족해요</b><p class="advice"></p></div>' +
-        '<div class="next">💪 <b>2️⃣ 아이디어 뽑기</b>로 돌아가서 코치의 질문에 답을 생각해 보고,<br>아이디어를 지웠다가 더 자세히 써서 다시 담아 보세요!</div>';
-      box.querySelector('.advice').textContent = r.advice;
-      const back = document.createElement('button');
-      back.className = 'btn-main';
-      back.style.cssText = 'width:100%; margin-top:10px; font-size:16px';
-      back.textContent = '2️⃣ 아이디어 뽑기로 돌아가기';
-      back.addEventListener('click', () => goIdea(2));
-      box.appendChild(back);
-      $('#orgMsg').textContent = '';
-      return;
-    }
     idea.summary = { name: r.name, problem: r.problem, solution: r.solution, effect: r.effect, cheer: r.cheer };
     saveIdea();
     showIdeaSummary(idea.summary);
