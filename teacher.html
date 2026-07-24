@@ -276,25 +276,7 @@ async function openStudent(sid, nick) {
       `<div class="d-item"><b>${name}</b><p class="${d[k] ? '' : 'none'}">${d[k] || '(아직 안 씀)'}</p></div>`).join('');
   $('#mLog').innerHTML = '<div class="empty">기록 불러오는 중...</div>';
   $('#modalWrap').classList.remove('hidden');
-  // 활동지·그림 사진 (있으면 명세서 아래에 표시)
-  api('media', { sessionId: sid }).then(m => {
-    if (!m.worksheet && !m.drawing) return;
-    const box = document.createElement('div');
-    box.innerHTML = '<h3 style="color:var(--navy); margin:14px 0 10px; border-top:1px dashed var(--line); padding-top:14px">📷 올린 사진</h3>';
-    for (const [label, url] of [['활동지 ①(글쓰기)', m.worksheet], ['발명품 그림', m.drawing]]) {
-      if (!url) continue;
-      const d = document.createElement('div');
-      d.className = 'd-item';
-      const b = document.createElement('b');
-      b.textContent = label;
-      const img = document.createElement('img');
-      img.src = url;
-      img.style.cssText = 'max-width:100%; border-radius:10px; border:1px solid var(--line); margin-top:4px';
-      d.append(b, img);
-      box.appendChild(d);
-    }
-    $('#mDraft').appendChild(box);
-  }).catch(() => {});
+  renderMedia(sid);
   try {
     const { events } = await api('events', { sessionId: sid });
     if (!events.length) { $('#mLog').innerHTML = '<div class="empty">아직 AI 사용 기록이 없어요.</div>'; return; }
@@ -317,6 +299,71 @@ async function openStudent(sid, nick) {
       return '';
     }).join('');
   } catch (e) { $('#mLog').innerHTML = `<div class="empty">${e.message}</div>`; }
+}
+// ---------- 활동지·그림 사진 (보기 + 교사 직접 올리기/바꾸기) ----------
+function compressImg(file, maxSide) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+      const c = document.createElement('canvas');
+      c.width = img.width * scale; c.height = img.height * scale;
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      resolve(c.toDataURL('image/jpeg', 0.82));
+    };
+    img.src = URL.createObjectURL(file);
+  });
+}
+async function renderMedia(sid) {
+  let m = { worksheet: null, drawing: null };
+  try { m = await api('media', { sessionId: sid }); } catch {}
+  let box = $('#mediaBox');
+  if (!box) {
+    box = document.createElement('div');
+    box.id = 'mediaBox';
+    $('#mDraft').appendChild(box);
+  }
+  box.innerHTML = '<h3 style="color:var(--navy); margin:14px 0 10px; border-top:1px dashed var(--line); padding-top:14px">📷 올린 사진</h3>';
+  for (const [kind, label] of [['worksheet', '활동지 ①(글쓰기)'], ['drawing', '발명품 그림']]) {
+    const d = document.createElement('div');
+    d.className = 'd-item';
+    const b = document.createElement('b');
+    b.textContent = label;
+    d.appendChild(b);
+    if (m[kind]) {
+      const img = document.createElement('img');
+      img.src = m[kind];
+      img.style.cssText = 'max-width:100%; border-radius:10px; border:1px solid var(--line); margin:4px 0';
+      d.appendChild(img);
+    } else {
+      const none = document.createElement('p');
+      none.className = 'none';
+      none.textContent = '(아직 없음)';
+      d.appendChild(none);
+    }
+    const up = document.createElement('button');
+    up.textContent = m[kind] ? '🔄 사진 바꾸기' : '📤 사진 올리기';
+    up.style.cssText = 'background:#eef1f6; color:var(--navy2); font-size:13.5px; font-weight:bold; padding:7px 12px; margin-top:2px';
+    up.addEventListener('click', () => {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+      input.addEventListener('change', async e => {
+        const file = e.target.files[0];
+        if (!file) return;
+        up.disabled = true; up.textContent = '올리는 중...';
+        try {
+          let dataUrl = await compressImg(file, 1000);
+          if (dataUrl.length > 850000) dataUrl = await compressImg(file, 700);
+          await api('setMedia', { sessionId: sid, kind, dataUrl });
+          await renderMedia(sid);
+        } catch (err) { alert(err.message); up.disabled = false; }
+      });
+      input.click();
+    });
+    d.appendChild(up);
+    box.appendChild(d);
+  }
 }
 function esc(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
 function closeModal() { $('#modalWrap').classList.add('hidden'); }

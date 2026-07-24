@@ -67,6 +67,20 @@ module.exports = async (req, res) => {
       return res.status(200).json({ students });
     }
 
+    if (action === 'setMedia') {
+      const sessionId = String(req.body.sessionId || '');
+      const kind = req.body.kind === 'drawing' ? 'drawing' : 'worksheet';
+      const dataUrl = req.body.dataUrl;
+      if (!sessionId || typeof dataUrl !== 'string' || !dataUrl.startsWith('data:image/')) {
+        return res.status(400).json({ error: '사진이 없어요.' });
+      }
+      if (dataUrl.length > 900000) return res.status(400).json({ error: '사진이 너무 커요.' });
+      const sRef = db().collection('sessions').doc(sessionId);
+      await sRef.collection('media').doc(kind).set({ dataUrl });
+      if (kind === 'drawing') await sRef.update({ hasDrawing: true }).catch(() => {});
+      return res.status(200).json({ ok: true });
+    }
+
     if (action === 'media') {
       const sessionId = String(req.body.sessionId || '');
       const col = db().collection('sessions').doc(sessionId).collection('media');
