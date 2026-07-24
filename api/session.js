@@ -11,16 +11,37 @@ module.exports = async (req, res) => {
     if (!codeDoc.exists || codeDoc.data().active !== true) {
       return res.status(403).json({ error: '활동코드가 없거나 마감되었어요. 선생님께 확인하세요.' });
     }
+    const chatLimit = codeDoc.data().chatLimit || 30;
+    const nick = String(nickname).trim();
+
+    // 같은 코드 + 같은 별명이면 기존 세션을 이어간다 (여러 개면 가장 최근 것)
+    const snap = await db().collection('sessions')
+      .where('code', '==', codeDoc.id).where('nickname', '==', nick).get();
+    if (!snap.empty) {
+      const last = snap.docs.reduce((a, b) => {
+        const ta = a.data().lastActive, tb = b.data().lastActive;
+        return (tb && tb.toMillis ? tb.toMillis() : 0) > (ta && ta.toMillis ? ta.toMillis() : 0) ? b : a;
+      });
+      await last.ref.update({ lastActive: admin.firestore.FieldValue.serverTimestamp() });
+      return res.status(200).json({
+        sessionId: last.id,
+        chatLimit,
+        chatUsed: last.data().chatCount || 0,
+        draft: last.data().draft || null,
+        idea: last.data().idea || null,
+        resumed: true
+      });
+    }
 
     const ref = await db().collection('sessions').add({
       code: codeDoc.id,
-      nickname: String(nickname).trim(),
+      nickname: nick,
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
       lastActive: admin.firestore.FieldValue.serverTimestamp(),
       chatCount: 0,
       draft: null
     });
-    return res.status(200).json({ sessionId: ref.id, chatLimit: codeDoc.data().chatLimit || 30 });
+    return res.status(200).json({ sessionId: ref.id, chatLimit, chatUsed: 0, draft: null, idea: null, resumed: false });
   } catch (e) {
     console.error(e);
     return res.status(500).json({ error: '입장 처리 중 오류가 났어요. 다시 시도해 주세요.' });

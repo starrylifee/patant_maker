@@ -28,7 +28,8 @@ module.exports = async (req, res) => {
         stars: { fresh: +s.fresh || 0, make: +s.make || 0, help: +s.help || 0 },
         summary: sm ? {
           name: String(sm.name || '').slice(0, 500), problem: String(sm.problem || '').slice(0, 500),
-          solution: String(sm.solution || '').slice(0, 500), effect: String(sm.effect || '').slice(0, 500)
+          solution: String(sm.solution || '').slice(0, 500), effect: String(sm.effect || '').slice(0, 500),
+          cheer: String(sm.cheer || '').slice(0, 500)
         } : null
       };
     }

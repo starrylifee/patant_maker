@@ -327,11 +327,12 @@ async function enter() {
   $('#btnEnter').disabled = true;
   try {
     const r = await api('session', { code, nickname });
-    session = { id: r.sessionId, nickname, code, chatLimit: r.chatLimit, chatUsed: 0 };
+    session = { id: r.sessionId, nickname, code, chatLimit: r.chatLimit, chatUsed: r.chatUsed || 0 };
     $('#who').textContent = `${nickname} 님`;
     updateChatCount();
     $('#enter').classList.add('hidden');
     $('#app').classList.remove('hidden');
+    if (r.resumed) restoreSession(r);
   } catch (e) {
     $('#enterMsg').textContent = e.message;
   } finally { $('#btnEnter').disabled = false; }
@@ -534,32 +535,87 @@ $('#btnOrganize').addEventListener('click', async () => {
   $('#orgMsg').textContent = 'AI 코치가 아이디어를 정리하고 있어요...';
   try {
     const r = await api('idea', { sessionId: session.id, action: 'organize', problem: idea.problem, chosen: idea.basket[idea.best] });
-    idea.summary = { name: r.name, problem: r.problem, solution: r.solution, effect: r.effect };
-    saveIdea();
-    $('#resultEmpty').classList.add('hidden');
-    const box = $('#ideaResult');
-    box.classList.remove('hidden');
-    box.innerHTML = '';
-    for (const [label, val] of [['💡 발명품 이름 후보', r.name], ['😣 어떤 불편함을 해결하나요?', r.problem], ['🔧 어떻게 해결하나요?', r.solution], ['✨ 좋은 점은?', r.effect]]) {
-      const d = document.createElement('div');
-      d.className = 'ri';
-      d.innerHTML = '<b></b><p></p>';
-      d.querySelector('b').textContent = label;
-      d.querySelector('p').textContent = val;
-      box.appendChild(d);
+    if (r.ok === false) {
+      // 아이디어가 아직 막연함 — 정리 대신 코치의 조언을 보여주고 2단계로 유도
+      $('#resultEmpty').classList.add('hidden');
+      const box = $('#ideaResult');
+      box.classList.remove('hidden');
+      box.innerHTML = '<div class="ri"><b>🤔 아직 정리하기엔 아이디어가 부족해요</b><p class="advice"></p></div>' +
+        '<div class="next">💪 <b>2️⃣ 아이디어 뽑기</b>로 돌아가서 코치의 질문에 답을 생각해 보고,<br>아이디어를 지웠다가 더 자세히 써서 다시 담아 보세요!</div>';
+      box.querySelector('.advice').textContent = r.advice;
+      const back = document.createElement('button');
+      back.className = 'btn-main';
+      back.style.cssText = 'width:100%; margin-top:10px; font-size:16px';
+      back.textContent = '2️⃣ 아이디어 뽑기로 돌아가기';
+      back.addEventListener('click', () => goIdea(2));
+      box.appendChild(back);
+      $('#orgMsg').textContent = '';
+      return;
     }
-    const ch = document.createElement('div');
-    ch.className = 'cheer'; ch.textContent = '🤖 ' + (r.cheer || '');
-    box.appendChild(ch);
-    const nx = document.createElement('div');
-    nx.className = 'next';
-    nx.innerHTML = '✏️ 이 내용을 <b>발명 활동지에 내 글씨로</b> 옮겨 적고 그림도 그려 보세요.<br>활동지를 다 쓰면 위의 <b>① 활동지 올리기</b>로 가요!';
-    box.appendChild(nx);
+    idea.summary = { name: r.name, problem: r.problem, solution: r.solution, effect: r.effect, cheer: r.cheer };
+    saveIdea();
+    showIdeaSummary(idea.summary);
     $('#orgMsg').textContent = '';
   } catch (e) {
     $('#orgMsg').textContent = e.message;
   } finally { $('#btnOrganize').disabled = false; }
 });
+
+function showIdeaSummary(s) {
+  $('#resultEmpty').classList.add('hidden');
+  const box = $('#ideaResult');
+  box.classList.remove('hidden');
+  box.innerHTML = '';
+  for (const [label, val] of [['💡 발명품 이름 후보', s.name], ['😣 어떤 불편함을 해결하나요?', s.problem], ['🔧 어떻게 해결하나요?', s.solution], ['✨ 좋은 점은?', s.effect]]) {
+    const d = document.createElement('div');
+    d.className = 'ri';
+    d.innerHTML = '<b></b><p></p>';
+    d.querySelector('b').textContent = label;
+    d.querySelector('p').textContent = val;
+    box.appendChild(d);
+  }
+  if (s.cheer) {
+    const ch = document.createElement('div');
+    ch.className = 'cheer'; ch.textContent = '🤖 ' + s.cheer;
+    box.appendChild(ch);
+  }
+  const nx = document.createElement('div');
+  nx.className = 'next';
+  nx.innerHTML = '✏️ 이 내용을 <b>발명 활동지에 내 글씨로</b> 옮겨 적고 그림도 그려 보세요.<br>활동지를 다 쓰면 위의 <b>① 활동지 올리기</b>로 가요!';
+  box.appendChild(nx);
+}
+
+// ---------- 이어가기: 저장된 초안·아이디어 복원 ----------
+function restoreSession(r) {
+  let hasDraft = false;
+  if (r.draft) {
+    for (const k of DRAFT_KEYS) {
+      if (r.draft[k]) { $('#f_' + k).value = r.draft[k]; hasDraft = true; }
+    }
+  }
+  if (r.idea) {
+    idea = {
+      place: r.idea.place || '', problem: r.idea.problem || '',
+      basket: Array.isArray(r.idea.basket) ? r.idea.basket : [],
+      best: Number.isInteger(r.idea.best) ? r.idea.best : -1,
+      stars: Object.assign({ fresh: 0, make: 0, help: 0 }, r.idea.stars),
+      summary: r.idea.summary || null
+    };
+    if (idea.place && PLACES[idea.place]) {
+      document.querySelectorAll('#places button').forEach(x => x.classList.toggle('on', x.dataset.p === idea.place));
+      $('#placeHint').textContent = '💭 ' + PLACES[idea.place];
+    }
+    $('#ideaProblem').value = idea.problem;
+    renderBasket();
+    paintStars();
+    if (idea.summary && idea.summary.name) showIdeaSummary(idea.summary);
+    if (!hasDraft) {
+      if (idea.summary && idea.summary.name) goIdea(3);
+      else if (idea.basket.length) goIdea(2);
+    }
+  }
+  if (hasDraft) goStep(2);
+}
 
 // ---------- Step1: OCR ----------
 $('#dropzone').addEventListener('click', () => $('#fileInput').click());
