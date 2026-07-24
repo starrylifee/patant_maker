@@ -61,6 +61,23 @@ module.exports = async (req, res) => {
     const filled = FIELDS.some(k => (d[k] || '').trim());
     if (!filled) return res.status(400).json({ error: '아직 쓴 내용이 없어요. 명세서를 조금 쓰고 심사를 받아 보세요.' });
 
+    // 지난 심사 기록 — 점수 요동을 줄이는 기준점
+    const prev = sDoc.data().lastReview || null;
+    const FIELD_KO = { title: '명칭', problem: '과제', solution: '해결', effect: '효과', detail: '실시', core: '청구' };
+    const unchanged = k => prev && prev.fields && (prev.fields[k] || '') === (d[k] || '');
+
+    // 모든 항목이 지난 심사와 똑같으면 AI를 부르지 않고 지난 결과를 그대로 돌려준다 (횟수 차감 없음)
+    if (prev && prev.scores && typeof prev.total === 'number' && FIELDS.every(unchanged)) {
+      return res.status(200).json({
+        scores: prev.scores, max: FIELD_MAX, total: prev.total,
+        issues: prev.issues || [],
+        comment: (prev.comment || '') + ' (지난 심사와 글이 같아서 점수도 같아요. 한 항목이라도 고치고 다시 심사를 받아 보세요!)',
+        used: sDoc.data().chatCount || 0, limit
+      });
+    }
+
+    // 지난 점수는 프롬프트에 넣지 않는다 (모델이 베끼는 문제) — 안정화는 아래 서버 보정으로 처리
+
     const draftText = `심사할 명세서 초안:
 
 [채점 항목]
@@ -106,6 +123,18 @@ module.exports = async (req, res) => {
       const v = Number(parsed.scores && parsed.scores[k]);
       scores[k] = Number.isFinite(v) ? Math.max(0, Math.min(FIELD_MAX[k], Math.round(v))) : 0;
       if (!(d[k] || '').trim()) scores[k] = 0;
+      const prevScore = prev && prev.scores && Number.isFinite(prev.scores[k]) ? prev.scores[k] : null;
+      if (prevScore !== null) {
+        if (unchanged(k)) {
+          // 안 고친 항목은 지난 점수로 고정 (AI 채점 요동 방지 — 위로도 아래로도 안 움직임)
+          scores[k] = prevScore;
+        } else {
+          // 지난 글에 내용을 덧붙인 항목은 지난 점수 아래로 내려가지 않는다
+          const oldT = ((prev.fields && prev.fields[k]) || '').trim();
+          const newT = (d[k] || '').trim();
+          if (oldT && newT.includes(oldT) && scores[k] < prevScore) scores[k] = prevScore;
+        }
+      }
     }
     const total = FIELDS.reduce((s, k) => s + scores[k], 0);
     const issues = (Array.isArray(parsed.issues) ? parsed.issues : []).slice(0, 6).map(i => ({
@@ -123,9 +152,12 @@ module.exports = async (req, res) => {
       issues,
       comment
     });
+    const fieldsSnapshot = {};
+    for (const k of FIELDS) fieldsSnapshot[k] = d[k] || '';
     await sRef.update({
       chatCount: admin.firestore.FieldValue.increment(1),
       lastScore: total,
+      lastReview: { scores, fields: fieldsSnapshot, total, issues, comment },
       lastActive: admin.firestore.FieldValue.serverTimestamp()
     });
 
