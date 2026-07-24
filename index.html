@@ -77,7 +77,10 @@
   #ideaResult .next { font-size: 14.5px; color: #8a6d1d; background: #fff6e3; border-radius: 10px; padding: 10px 12px; margin-top: 10px; line-height: 1.55; }
 
   /* Step1 업로드 */
-  #step1 { height: 100%; display: flex; align-items: center; justify-content: center; gap: 30px; padding: 24px; }
+  #step1 { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: 24px; }
+  #step1 .row { display: flex; gap: 30px; }
+  #padletNote { display: flex; align-items: center; gap: 14px; background: #fff6e3; border: 2px solid var(--amber); border-radius: 14px; padding: 14px 20px; font-size: 17px; line-height: 1.5; }
+  #padletNote a { background: var(--amber); color: #fff; font-weight: bold; font-size: 17px; padding: 11px 18px; border-radius: 10px; text-decoration: none; white-space: nowrap; }
   .panel { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 26px; }
   #dropzone { width: 420px; min-height: 380px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; border: 3px dashed var(--line); cursor: pointer; text-align: center; }
   #dropzone:hover { border-color: var(--amber); }
@@ -242,6 +245,11 @@
 
     <!-- Step 1 -->
     <div id="step1" class="hidden">
+      <div id="padletNote">
+        <span>📎 <b>내 활동지 사진 받는 곳!</b><br>오른쪽 버튼을 눌러 패들릿에서 <b>내 활동지 ①(글쓰기) 사진을 다운로드</b>한 다음, 아래에 올려요.</span>
+        <a href="https://padlet.com/ssamcoder/padlet-bxk4n91shyjvgsiz" target="_blank" rel="noopener">📥 패들릿 열기</a>
+      </div>
+      <div class="row">
       <div class="panel" id="dropzone">
         <div class="big">📷</div>
         <b style="font-size:19px">활동지 ①(글쓰기) 사진 올리기</b>
@@ -255,6 +263,7 @@
         <button id="btnToEditor" class="btn-amber hidden" style="margin-top:14px">이 내용으로 명세서 쓰러 가기 ✍️</button>
       </div>
       <input type="file" id="fileInput" accept="image/*" class="hidden">
+      </div>
     </div>
 
     <!-- Step 2 -->
