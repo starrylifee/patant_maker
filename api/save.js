@@ -6,6 +6,13 @@ module.exports = async (req, res) => {
     const { sessionId, draft, idea, flags } = req.body || {};
     if (!sessionId || (!draft && !idea && !flags)) return res.status(400).json({ error: 'no draft' });
 
+    const sDoc = await db().collection('sessions').doc(sessionId).get();
+    if (!sDoc.exists) return res.status(403).json({ error: '먼저 활동코드로 입장해 주세요.' });
+    const codeDoc = await db().collection('codes').doc(sDoc.data().code).get();
+    if (!codeDoc.exists || codeDoc.data().active !== true) {
+      return res.status(403).json({ error: '활동이 마감되어 저장할 수 없어요.' });
+    }
+
     const patch = { lastActive: admin.firestore.FieldValue.serverTimestamp() };
     if (flags) {
       for (const k of ['hasDrawing', 'hwpxDone']) {

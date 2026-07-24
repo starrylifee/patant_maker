@@ -21,6 +21,10 @@ module.exports = async (req, res) => {
     const sRef = db().collection('sessions').doc(sessionId);
     const sDoc = await sRef.get();
     if (!sDoc.exists) return res.status(403).json({ error: '먼저 활동코드로 입장해 주세요.' });
+    const codeDoc = await db().collection('codes').doc(sDoc.data().code).get();
+    if (!codeDoc.exists || codeDoc.data().active !== true) {
+      return res.status(403).json({ error: '활동이 마감되었어요.' });
+    }
 
     const d = draft || {};
     if (!(d.title || '').trim() && !(d.solution || '').trim()) {

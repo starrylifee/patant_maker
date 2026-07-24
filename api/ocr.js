@@ -45,6 +45,13 @@ module.exports = async (req, res) => {
     const { sessionId, imageBase64 } = req.body || {};
     if (!sessionId || !imageBase64) return res.status(400).json({ error: '사진이 없어요.' });
 
+    const sDoc0 = await db().collection('sessions').doc(sessionId).get();
+    if (!sDoc0.exists) return res.status(403).json({ error: '먼저 활동코드로 입장해 주세요.' });
+    const codeDoc = await db().collection('codes').doc(sDoc0.data().code).get();
+    if (!codeDoc.exists || codeDoc.data().active !== true) {
+      return res.status(403).json({ error: '활동이 마감되었어요.' });
+    }
+
     const key = process.env.UPSTAGE_API_KEY;
     const buf = Buffer.from(imageBase64.replace(/^data:image\/\w+;base64,/, ''), 'base64');
     if (buf.length > 4 * 1024 * 1024) return res.status(400).json({ error: '사진이 너무 커요. 다시 찍어주세요.' });
