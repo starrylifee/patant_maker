@@ -3,8 +3,8 @@ const { db, admin } = require('../lib/firebase');
 module.exports = async (req, res) => {
   if (req.method !== 'POST') return res.status(405).json({ error: 'POST only' });
   try {
-    const { sessionId, draft, idea, flags, drawing } = req.body || {};
-    if (!sessionId || (!draft && !idea && !flags && !drawing)) return res.status(400).json({ error: 'no draft' });
+    const { sessionId, draft, idea, flags, drawing, worksheet } = req.body || {};
+    if (!sessionId || (!draft && !idea && !flags && !drawing && !worksheet)) return res.status(400).json({ error: 'no draft' });
 
     const sDoc = await db().collection('sessions').doc(sessionId).get();
     if (!sDoc.exists) return res.status(403).json({ error: '먼저 활동코드로 입장해 주세요.' });
@@ -49,6 +49,9 @@ module.exports = async (req, res) => {
       if (drawing.length > 900000) return res.status(400).json({ error: '그림이 너무 커요.' });
       await db().collection('sessions').doc(sessionId).collection('media').doc('drawing').set({ dataUrl: drawing });
       patch.hasDrawing = true;
+    }
+    if (typeof worksheet === 'string' && worksheet.startsWith('data:image/') && worksheet.length <= 900000) {
+      await db().collection('sessions').doc(sessionId).collection('media').doc('worksheet').set({ dataUrl: worksheet });
     }
     await db().collection('sessions').doc(sessionId).update(patch);
     return res.status(200).json({ ok: true });

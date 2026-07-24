@@ -67,6 +67,16 @@ module.exports = async (req, res) => {
       return res.status(200).json({ students });
     }
 
+    if (action === 'media') {
+      const sessionId = String(req.body.sessionId || '');
+      const col = db().collection('sessions').doc(sessionId).collection('media');
+      const [ws, dr] = await Promise.all([col.doc('worksheet').get(), col.doc('drawing').get()]);
+      return res.status(200).json({
+        worksheet: ws.exists ? ws.data().dataUrl : null,
+        drawing: dr.exists ? dr.data().dataUrl : null
+      });
+    }
+
     if (action === 'events') {
       const sessionId = String(req.body.sessionId || '');
       const snap = await db().collection('sessions').doc(sessionId).collection('events').orderBy('ts', 'asc').get();

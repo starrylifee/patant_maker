@@ -651,6 +651,10 @@ $('#fileInput').addEventListener('change', async e => {
     $('#ocrResult').classList.remove('hidden');
     $('#btnToEditor').classList.remove('hidden');
     window._ocrFields = f;
+    // 활동지 사진 원본(압축본)도 서버에 저장 — 교사가 손글씨 원본을 볼 수 있게
+    let ws = await compress(file, 1000);
+    if (ws.length > 850000) ws = await compress(file, 700);
+    api('save', { sessionId: session.id, worksheet: ws }).catch(() => {});
   } catch (err) {
     $('#ocrStatus').textContent = err.message;
   }
