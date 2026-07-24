@@ -136,13 +136,15 @@ function build(j) {
   if ((deck.problem || []).length) wrap.appendChild(bulletSlide('😣', '어떤 불편함이 있었나요?', deck.problem));
   if ((deck.solution || []).length) wrap.appendChild(bulletSlide('🔧', '나는 이렇게 해결했어요', deck.solution));
 
-  if (j.drawing) {
+  // 그림이 있으면 그림, 없으면 활동지 사진을 보여준다
+  const pic = j.drawing || j.worksheet;
+  if (pic) {
     const s = el('section', 'slide');
     const head = el('div', 'head');
-    head.append(textEl('span', 'em', '🎨'), textEl('span', '', '내 발명품 그림'));
+    head.append(textEl('span', 'em', j.drawing ? '🎨' : '📝'), textEl('span', '', j.drawing ? '내 발명품 그림' : '내 발명 활동지'));
     const iw = el('div', 'imgwrap');
     const img = document.createElement('img');
-    img.src = j.drawing;
+    img.src = pic;
     iw.appendChild(img);
     s.append(head, iw);
     wrap.appendChild(s);

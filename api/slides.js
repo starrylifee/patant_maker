@@ -69,12 +69,14 @@ module.exports = async (req, res) => {
       await sRef.update({ slideDeck: deck });
     }
 
-    const media = await sRef.collection('media').doc('drawing').get();
+    const col = sRef.collection('media');
+    const [dr, ws] = await Promise.all([col.doc('drawing').get(), col.doc('worksheet').get()]);
     return res.status(200).json({
       nickname: sDoc.data().nickname,
       title: d.title || '나의 발명품',
       deck,
-      drawing: media.exists ? media.data().dataUrl : null
+      drawing: dr.exists ? dr.data().dataUrl : null,
+      worksheet: ws.exists ? ws.data().dataUrl : null
     });
   } catch (e) {
     console.error(e);
