@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>발표 슬라이드 — 특허 명세서 메이커</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎤</text></svg>">
+<style>
+  :root { --navy: #1e2a4a; --navy2: #2c3e6b; --amber: #f5a623; --line: #d8dee9; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: "맑은 고딕", "Malgun Gothic", sans-serif; background: #10182e; color: #222; overflow: hidden; }
+  .hidden { display: none !important; }
+
+  /* 로딩 · 오류 */
+  #status { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; color: #cdd6ea; font-size: 22px; text-align: center; line-height: 1.6; }
+  #status input { font-family: inherit; font-size: 20px; text-align: center; border: none; border-radius: 10px; padding: 12px 16px; width: 320px; }
+  #status button { font-family: inherit; font-size: 19px; font-weight: bold; border: none; border-radius: 10px; padding: 12px 28px; background: var(--amber); color: #fff; cursor: pointer; }
+
+  /* 슬라이드 */
+  #deck { position: fixed; inset: 0; }
+  .slide { position: absolute; inset: 0; display: none; flex-direction: column; background: #fff; }
+  .slide.on { display: flex; }
+  .slide .head { background: var(--navy); color: #fff; padding: 3.2vh 5vw; font-size: 4.6vh; font-weight: bold; display: flex; align-items: center; gap: 1.5vw; }
+  .slide .head .em { font-size: 5vh; }
+  .slide .body { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 4vh 7vw; gap: 3.5vh; }
+  .bullet { display: flex; align-items: flex-start; gap: 2vw; font-size: 5.4vh; line-height: 1.45; color: #223; }
+  .bullet .dot { color: var(--amber); font-weight: bold; flex-shrink: 0; }
+
+  /* 표지 */
+  .slide.cover { background: linear-gradient(135deg, var(--navy), var(--navy2)); color: #fff; align-items: center; justify-content: center; text-align: center; gap: 3vh; }
+  .cover .emoji { font-size: 11vh; }
+  .cover h1 { font-size: 9vh; line-height: 1.3; padding: 0 6vw; word-break: keep-all; }
+  .cover .tagline { font-size: 4vh; color: #ffd98a; padding: 0 10vw; line-height: 1.5; word-break: keep-all; }
+  .cover .who { font-size: 4.2vh; margin-top: 2vh; background: rgba(255,255,255,.12); border-radius: 100px; padding: 1.4vh 4vw; }
+
+  /* 그림 슬라이드 */
+  .slide .imgwrap { flex: 1; display: flex; align-items: center; justify-content: center; padding: 3vh 4vw; min-height: 0; }
+  .slide .imgwrap img { max-width: 100%; max-height: 100%; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,.15); }
+
+  /* 핵심 · 마지막 */
+  .slide.big .body { align-items: center; text-align: center; }
+  .slide.big .claim { font-size: 6.5vh; line-height: 1.5; color: var(--navy); font-weight: bold; word-break: keep-all; padding: 0 4vw; }
+
+  /* 내비게이션 */
+  #nav { position: fixed; bottom: 2.5vh; right: 2.5vw; display: flex; align-items: center; gap: 12px; z-index: 10; }
+  #nav button { font-family: inherit; border: none; border-radius: 100px; width: 6.5vh; height: 6.5vh; font-size: 3vh; background: rgba(30,42,74,.85); color: #fff; cursor: pointer; }
+  #nav button:hover { background: var(--amber); }
+  #pageNum { color: rgba(30,42,74,.6); font-size: 2.4vh; font-weight: bold; }
+  .cover ~ #nav #pageNum { color: rgba(255,255,255,.6); }
+</style>
+</head>
+<body>
+
+<div id="status">불러오는 중...</div>
+<div id="deck" class="hidden"></div>
+<div id="nav" class="hidden">
+  <span id="pageNum"></span>
+  <button id="btnPrev">◀</button>
+  <button id="btnNext">▶</button>
+  <button id="btnFull" title="전체 화면">⛶</button>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const sid = new URLSearchParams(location.search).get('sid');
+let slides = [], cur = 0;
+
+async function load(pw) {
+  $('#status').textContent = '슬라이드를 만들고 있어요...';
+  try {
+    const r = await fetch('/api/slides', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pw, sessionId: sid })
+    });
+    const j = await r.json().catch(() => ({}));
+    if (r.status === 401) { askPw('비밀번호가 틀렸어요.'); return; }
+    if (!r.ok) throw new Error(j.error || '오류가 났어요.');
+    sessionStorage.setItem('tpw', pw);
+    build(j);
+  } catch (e) {
+    $('#status').textContent = e.message;
+  }
+}
+
+function askPw(msg) {
+  $('#status').innerHTML = '';
+  const p = document.createElement('div');
+  p.textContent = msg || '교사 비밀번호를 입력하세요.';
+  const inp = document.createElement('input');
+  inp.type = 'password';
+  const btn = document.createElement('button');
+  btn.textContent = '슬라이드 열기';
+  const go = () => load(inp.value);
+  btn.addEventListener('click', go);
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') go(); });
+  $('#status').append(p, inp, btn);
+  inp.focus();
+}
+
+function el(tag, cls, html) {
+  const d = document.createElement(tag);
+  if (cls) d.className = cls;
+  if (html !== undefined) d.innerHTML = html;
+  return d;
+}
+function textEl(tag, cls, text) {
+  const d = el(tag, cls);
+  d.textContent = text;
+  return d;
+}
+
+function bulletSlide(emoji, headText, items) {
+  const s = el('section', 'slide');
+  const head = el('div', 'head');
+  head.append(textEl('span', 'em', emoji), textEl('span', '', headText));
+  const body = el('div', 'body');
+  for (const it of items) {
+    const b = el('div', 'bullet');
+    b.append(textEl('span', 'dot', '●'), textEl('span', '', it));
+    body.appendChild(b);
+  }
+  s.append(head, body);
+  return s;
+}
+
+function build(j) {
+  const deck = j.deck || {};
+  const wrap = $('#deck');
+
+  const cover = el('section', 'slide cover');
+  cover.append(textEl('div', 'emoji', '💡'), textEl('h1', '', j.title));
+  if (deck.tagline) cover.append(textEl('div', 'tagline', deck.tagline));
+  cover.append(textEl('div', 'who', `발명가 ${j.nickname}`));
+  wrap.appendChild(cover);
+
+  if ((deck.problem || []).length) wrap.appendChild(bulletSlide('😣', '어떤 불편함이 있었나요?', deck.problem));
+  if ((deck.solution || []).length) wrap.appendChild(bulletSlide('🔧', '나는 이렇게 해결했어요', deck.solution));
+
+  if (j.drawing) {
+    const s = el('section', 'slide');
+    const head = el('div', 'head');
+    head.append(textEl('span', 'em', '🎨'), textEl('span', '', '내 발명품 그림'));
+    const iw = el('div', 'imgwrap');
+    const img = document.createElement('img');
+    img.src = j.drawing;
+    iw.appendChild(img);
+    s.append(head, iw);
+    wrap.appendChild(s);
+  }
+
+  if ((deck.effect || []).length) wrap.appendChild(bulletSlide('✨', '무엇이 좋아졌나요?', deck.effect));
+
+  if (deck.claim) {
+    const s = el('section', 'slide big');
+    const head = el('div', 'head');
+    head.append(textEl('span', 'em', '🏆'), textEl('span', '', '내 발명의 핵심'));
+    const body = el('div', 'body');
+    body.appendChild(textEl('div', 'claim', `“${deck.claim}”`));
+    s.append(head, body);
+    wrap.appendChild(s);
+  }
+
+  const last = el('section', 'slide cover');
+  last.append(textEl('div', 'emoji', '🙋'), textEl('h1', '', '들어주셔서 감사합니다!'), textEl('div', 'tagline', '궁금한 점을 물어봐 주세요'));
+  wrap.appendChild(last);
+
+  slides = [...wrap.querySelectorAll('.slide')];
+  $('#status').classList.add('hidden');
+  wrap.classList.remove('hidden');
+  $('#nav').classList.remove('hidden');
+  show(0);
+}
+
+function show(n) {
+  cur = Math.max(0, Math.min(slides.length - 1, n));
+  slides.forEach((s, i) => s.classList.toggle('on', i === cur));
+  $('#pageNum').textContent = `${cur + 1} / ${slides.length}`;
+}
+document.addEventListener('keydown', e => {
+  if (['ArrowRight', ' ', 'PageDown', 'Enter'].includes(e.key)) { e.preventDefault(); show(cur + 1); }
+  if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); show(cur - 1); }
+});
+$('#btnNext').addEventListener('click', () => show(cur + 1));
+$('#btnPrev').addEventListener('click', () => show(cur - 1));
+$('#btnFull').addEventListener('click', () => {
+  if (document.fullscreenElement) document.exitFullscreen();
+  else document.documentElement.requestFullscreen();
+});
+$('#deck').addEventListener('click', e => {
+  if (e.target.closest('#nav')) return;
+  show(e.clientX > innerWidth / 2 ? cur + 1 : cur - 1);
+});
+
+if (!sid) $('#status').textContent = '학생 정보가 없어요. 교사 대시보드에서 열어 주세요.';
+else if (sessionStorage.getItem('tpw')) load(sessionStorage.getItem('tpw'));
+else askPw();
+</script>
+</body>
+</html>

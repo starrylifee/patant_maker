@@ -815,7 +815,10 @@ $('#drawInput').addEventListener('change', async e => {
   $('#drawPreview').src = drawingDataUrl;
   $('#drawPreview').classList.remove('hidden');
   $('#drawzone .big').classList.add('hidden');
-  api('save', { sessionId: session.id, flags: { hasDrawing: true } }).catch(() => {});
+  // 발표 슬라이드용으로 작게 압축해 서버에도 저장 (900KB 넘으면 더 줄임)
+  let serverCopy = await compress(file, 1000);
+  if (serverCopy.length > 850000) serverCopy = await compress(file, 700);
+  api('save', { sessionId: session.id, drawing: serverCopy, flags: { hasDrawing: true } }).catch(() => {});
   e.target.value = '';
 });
 
