@@ -350,6 +350,10 @@ async function enter() {
     $('#app').classList.remove('hidden');
     if (r.resumed) restoreSession(r);
     if (r.readonly) applyReadonly();
+    // 새로고침해도 이어가도록 이 탭에 입장 정보 저장 + 주소의 단계로 복귀
+    sessionStorage.setItem('pmEnter', JSON.stringify({ code, nickname, pin }));
+    const m = location.hash.match(/^#step([0-3])$/);
+    if (m) goStep(+m[1]);
   } catch (e) {
     $('#enterMsg').textContent = e.message;
   } finally { $('#btnEnter').disabled = false; }
@@ -368,8 +372,13 @@ async function api(name, body) {
 function goStep(n) {
   document.querySelectorAll('.steps button').forEach(b => b.classList.toggle('on', b.dataset.step == n));
   [0, 1, 2, 3].forEach(i => $('#step' + i).classList.toggle('hidden', i != n));
+  if (location.hash !== '#step' + n) history.replaceState(null, '', '#step' + n);
 }
 document.querySelectorAll('.steps button').forEach(b => b.addEventListener('click', () => goStep(b.dataset.step)));
+window.addEventListener('hashchange', () => {
+  const m = location.hash.match(/^#step([0-3])$/);
+  if (m && session) goStep(+m[1]);
+});
 
 function compress(file, maxSide = 1600) {
   return new Promise(resolve => {
@@ -893,6 +902,17 @@ $('#btnOffice').addEventListener('click', () => {
 $('#btnSlides').addEventListener('click', () => {
   window.open('/slides.html?sid=' + encodeURIComponent(session.id) + '&student=1', '_blank');
 });
+
+// ---------- 새로고침 자동 재입장 (탭을 닫으면 지워짐 — 공용 크롬북 안전) ----------
+try {
+  const saved = JSON.parse(sessionStorage.getItem('pmEnter') || 'null');
+  if (saved && saved.code && saved.nickname) {
+    $('#inCode').value = saved.code;
+    $('#inNick').value = saved.nickname;
+    $('#inPin').value = saved.pin || '';
+    enter();
+  }
+} catch {}
 </script>
 </body>
 </html>
