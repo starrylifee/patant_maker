@@ -805,6 +805,17 @@ $('#btnReview').addEventListener('click', async () => {
       div.querySelector('b').textContent = `${where}"${i.quote}" — `;
       div.querySelector('.why').textContent = i.why;
       div.querySelector('.fx').textContent = '👉 ' + i.fix;
+      if (!window._readonly) {
+        const ask = document.createElement('button');
+        ask.textContent = '💬 어떻게 고쳐요?';
+        ask.style.cssText = 'display:block; margin-top:6px; font-size:12.5px; font-weight:bold; padding:5px 10px; border:1.5px solid var(--navy2); border-radius:14px; background:#fff; color:var(--navy2); cursor:pointer';
+        ask.addEventListener('click', () => {
+          ask.disabled = true; ask.style.opacity = .5;
+          const name = FIELD_KO[i.field] || '명세서';
+          sendChat(`심사에서 ${name}의 "${i.quote}" 부분이 "${i.why}"라고 지적받았어요. 어떻게 고치면 좋을지 도와주세요.`);
+        });
+        div.appendChild(ask);
+      }
       wait.appendChild(div);
     }
     const cmt = document.createElement('div');
