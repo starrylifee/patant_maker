@@ -49,6 +49,25 @@ module.exports = async (req, res) => {
       return res.status(200).json({ ok: true });
     }
 
+    if (action === 'deleteCode') {
+      const code = String(req.body.code || '').trim().toUpperCase();
+      if (!code) return res.status(400).json({ error: '코드가 없어요.' });
+      const snap = await db().collection('sessions').where('code', '==', code).get();
+      for (const doc of snap.docs) {
+        for (const sub of ['media', 'events']) {
+          const subDocs = (await doc.ref.collection(sub).get()).docs;
+          while (subDocs.length) {
+            const batch = db().batch();
+            subDocs.splice(0, 400).forEach(d => batch.delete(d.ref));
+            await batch.commit();
+          }
+        }
+        await doc.ref.delete();
+      }
+      await db().collection('codes').doc(code).delete();
+      return res.status(200).json({ ok: true });
+    }
+
     if (action === 'students') {
       const code = String(req.body.code || '').trim().toUpperCase();
       const snap = await db().collection('sessions').where('code', '==', code).get();

@@ -182,6 +182,7 @@ function renderCodes() {
         <span class="name">${c.code}</span>
         <span class="badge ${c.active ? 'b-on' : 'b-off'}">${c.active ? '활동 중' : '마감됨'}</span>
         <span class="badge ${c.officeOpen ? 'b-on' : 'b-off'}">출원 체험 ${c.officeOpen ? '열림 🔓' : '잠김 🔒'}</span>
+        <button class="del-code" title="활동코드 삭제" style="margin-left:auto; background:transparent; color:#c0c7d4; font-size:16px; padding:2px 6px">🗑</button>
       </div>
       <div class="toggles">
         <button data-act="active">${c.active ? '활동 마감하기' : '다시 열기'}</button>
@@ -191,6 +192,16 @@ function renderCodes() {
   document.querySelectorAll('.code-card').forEach(card => {
     const code = card.dataset.code;
     card.addEventListener('click', () => selectCode(code));
+    card.querySelector('.del-code').addEventListener('click', async e => {
+      e.stopPropagation();
+      if (!confirm(`활동코드 '${code}'를 삭제할까요?\n이 코드로 활동한 모든 학생의 기록·사진까지 지워지고 되돌릴 수 없어요.`)) return;
+      e.target.disabled = true; e.target.textContent = '...';
+      try {
+        await api('deleteCode', { code });
+        if (selCode === code) { selCode = null; $('#stuTitle').textContent = '학생 활동 — 코드를 선택하세요'; $('#stuBody').innerHTML = '<div class="empty">왼쪽에서 활동코드를 누르면 학생 목록이 나와요.</div>'; }
+        await loadCodes();
+      } catch (err) { alert(err.message); e.target.disabled = false; e.target.textContent = '🗑'; }
+    });
     card.querySelectorAll('.toggles button').forEach(b => b.addEventListener('click', async e => {
       e.stopPropagation();
       const c = codes.find(x => x.code === code);
