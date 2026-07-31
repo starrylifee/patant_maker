@@ -74,6 +74,7 @@ module.exports = async (req, res) => {
       const students = snap.docs.map(d => ({
         sessionId: d.id,
         nickname: d.data().nickname,
+        pin: d.data().pin || null,
         chatCount: d.data().chatCount || 0,
         lastActive: tsToMs(d.data().lastActive),
         draft: d.data().draft || null,

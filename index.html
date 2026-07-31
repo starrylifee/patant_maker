@@ -152,6 +152,8 @@
     <input id="inCode" placeholder="선생님이 알려준 코드" autocomplete="off">
     <label>별명</label>
     <input id="inNick" placeholder="예: 씩씩한 발명가" autocomplete="off" maxlength="12">
+    <label>나만의 비밀번호 (숫자 4자리)</label>
+    <input id="inPin" placeholder="처음이면 새로 정해요 (예: 0713)" autocomplete="off" maxlength="4" inputmode="numeric">
     <button id="btnEnter">시작하기 🚀</button>
     <div id="enterMsg"></div>
   </div>
@@ -327,15 +329,18 @@ let session = null, chatHistory = [], drawingDataUrl = null;
 // ---------- 입장 ----------
 $('#inCode').focus();
 $('#inCode').addEventListener('keydown', e => { if (e.key === 'Enter') $('#inNick').focus(); });
-$('#inNick').addEventListener('keydown', e => { if (e.key === 'Enter') enter(); });
+$('#inNick').addEventListener('keydown', e => { if (e.key === 'Enter') $('#inPin').focus(); });
+$('#inPin').addEventListener('input', e => { e.target.value = e.target.value.replace(/\D/g, ''); });
+$('#inPin').addEventListener('keydown', e => { if (e.key === 'Enter') enter(); });
 $('#btnEnter').addEventListener('click', enter);
 
 async function enter() {
-  const code = $('#inCode').value.trim(), nickname = $('#inNick').value.trim();
+  const code = $('#inCode').value.trim(), nickname = $('#inNick').value.trim(), pin = $('#inPin').value.trim();
   if (!code || !nickname) { $('#enterMsg').textContent = '활동코드와 별명을 모두 써 주세요.'; return; }
+  if (!/^\d{4}$/.test(pin)) { $('#enterMsg').textContent = '나만의 비밀번호를 숫자 4자리로 써 주세요.'; $('#inPin').focus(); return; }
   $('#btnEnter').disabled = true;
   try {
-    const r = await api('session', { code, nickname });
+    const r = await api('session', { code, nickname, pin });
     session = { id: r.sessionId, nickname, code, chatLimit: r.chatLimit, chatUsed: r.chatUsed || 0 };
     $('#who').textContent = `${nickname} 님`;
     updateChatCount();
@@ -606,6 +611,18 @@ function restoreSession(r) {
       if (idea.summary && idea.summary.name) goIdea(3);
       else if (idea.basket.length) goIdea(2);
     }
+  }
+  // 서버에 저장된 그림·활동지 사진 복원 (재입장해도 한글파일에 그림이 들어가게)
+  if (r.drawing) {
+    drawingDataUrl = r.drawing;
+    $('#drawPreview').src = r.drawing;
+    $('#drawPreview').classList.remove('hidden');
+    $('#drawzone .big').classList.add('hidden');
+  }
+  if (r.worksheet) {
+    $('#preview').src = r.worksheet;
+    $('#preview').classList.remove('hidden');
+    $('#dropzone .big').classList.add('hidden');
   }
   if (hasDraft) goStep(2);
 }

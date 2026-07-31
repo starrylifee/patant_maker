@@ -234,10 +234,10 @@ async function selectCode(code) {
     const { students } = await api('students', { code });
     if (!students.length) { $('#stuBody').innerHTML = '<div class="empty">아직 입장한 학생이 없어요.</div>'; return; }
     $('#stuBody').innerHTML = `<table><thead><tr><th>별명</th><th>진행 (⓪→③)</th><th>발명품 이름</th><th>AI 질문</th><th>마지막 활동</th><th></th></tr></thead><tbody>` +
-      students.map(s => `<tr class="stu" data-sid="${s.sessionId}" data-nick="${s.nickname}">
-        <td><b>${s.nickname}</b></td>
+      students.map(s => `<tr class="stu" data-sid="${s.sessionId}" data-nick="${escA(s.nickname)}">
+        <td><b>${esc(s.nickname)}</b></td>
         <td>${progChips(s)}</td>
-        <td>${(s.draft && s.draft.title) || '<span style="color:#bbb">아직 없음</span>'}</td>
+        <td>${esc(s.draft && s.draft.title) || '<span style="color:#bbb">아직 없음</span>'}</td>
         <td>${s.chatCount}회</td>
         <td>${s.lastActive ? new Date(s.lastActive).toLocaleString('ko-KR', { month: 'numeric', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '-'}</td>
         <td><button class="del-stu" title="학생 계정 삭제" style="background:#f6e8e7; color:var(--danger); font-size:14px; padding:6px 10px">🗑</button></td>
@@ -276,9 +276,9 @@ function progChips(s) {
 // ---------- 학생 상세 ----------
 const FIELD_NAMES = { title: '발명의 명칭', field: '기술분야', background: '배경이 되는 기술', problem: '해결하려는 과제', solution: '과제의 해결 수단', effect: '발명의 효과', drawingDesc: '도면의 간단한 설명', detail: '실시하기 위한 구체적인 내용', core: '청구범위', abstract: '요약' };
 async function openStudent(sid, nick) {
-  $('#mName').textContent = `${nick} 학생의 기록`;
-  $('#btnSlides').onclick = () => window.open('slides.html?sid=' + encodeURIComponent(sid), '_blank');
   const s = (window._students || []).find(x => x.sessionId === sid);
+  $('#mName').textContent = `${nick} 학생의 기록` + (s && s.pin ? ` · PIN ${s.pin}` : '');
+  $('#btnSlides').onclick = () => window.open('slides.html?sid=' + encodeURIComponent(sid), '_blank');
   const d = (s && s.draft) || {};
   const i = (s && s.idea) || null;
   let ideaHtml = '';
@@ -295,7 +295,7 @@ async function openStudent(sid, nick) {
   }
   $('#mDraft').innerHTML = ideaHtml + '<h3 style="color:var(--navy); margin-bottom:12px">📝 명세서 초안</h3>' +
     Object.entries(FIELD_NAMES).map(([k, name]) =>
-      `<div class="d-item"><b>${name}</b><p class="${d[k] ? '' : 'none'}">${d[k] || '(아직 안 씀)'}</p></div>`).join('');
+      `<div class="d-item"><b>${name}</b><p class="${d[k] ? '' : 'none'}">${esc(d[k]) || '(아직 안 씀)'}</p></div>`).join('');
   $('#mLog').innerHTML = '<div class="empty">기록 불러오는 중...</div>';
   $('#modalWrap').classList.remove('hidden');
   renderMedia(sid);
@@ -388,6 +388,7 @@ async function renderMedia(sid) {
   }
 }
 function esc(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+function escA(s) { return esc(s).replace(/"/g, '&quot;'); }
 function closeModal() { $('#modalWrap').classList.add('hidden'); }
 $('#modalWrap').addEventListener('click', e => { if (e.target.id === 'modalWrap') closeModal(); });
 </script>
