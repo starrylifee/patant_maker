@@ -19,6 +19,7 @@ module.exports = async (req, res) => {
         code: d.id,
         active: d.data().active === true,
         officeOpen: d.data().officeOpen === true,
+        slidesOpen: d.data().slidesOpen === true,
         chatLimit: d.data().chatLimit || 30,
         createdAt: tsToMs(d.data().createdAt)
       })).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
@@ -32,7 +33,7 @@ module.exports = async (req, res) => {
       if ((await ref.get()).exists) return res.status(409).json({ error: '이미 있는 코드예요.' });
       const chatLimit = Math.max(1, Math.min(100, parseInt(req.body.chatLimit) || 30));
       await ref.set({
-        active: true, officeOpen: false, chatLimit,
+        active: true, officeOpen: false, slidesOpen: false, chatLimit,
         createdAt: admin.firestore.FieldValue.serverTimestamp()
       });
       return res.status(200).json({ ok: true });
@@ -43,6 +44,7 @@ module.exports = async (req, res) => {
       const patch = {};
       if (typeof req.body.active === 'boolean') patch.active = req.body.active;
       if (typeof req.body.officeOpen === 'boolean') patch.officeOpen = req.body.officeOpen;
+      if (typeof req.body.slidesOpen === 'boolean') patch.slidesOpen = req.body.slidesOpen;
       if (req.body.chatLimit) patch.chatLimit = Math.max(1, Math.min(100, parseInt(req.body.chatLimit)));
       if (!Object.keys(patch).length) return res.status(400).json({ error: '바꿀 내용이 없어요.' });
       await db().collection('codes').doc(code).update(patch);

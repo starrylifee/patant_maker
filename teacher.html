@@ -182,11 +182,13 @@ function renderCodes() {
         <span class="name">${c.code}</span>
         <span class="badge ${c.active ? 'b-on' : 'b-off'}">${c.active ? '활동 중' : '마감됨'}</span>
         <span class="badge ${c.officeOpen ? 'b-on' : 'b-off'}">출원 체험 ${c.officeOpen ? '열림 🔓' : '잠김 🔒'}</span>
+        <span class="badge ${c.slidesOpen ? 'b-on' : 'b-off'}">발표 연습 ${c.slidesOpen ? '열림 🔓' : '잠김 🔒'}</span>
         <button class="del-code" title="활동코드 삭제" style="margin-left:auto; background:transparent; color:#c0c7d4; font-size:16px; padding:2px 6px">🗑</button>
       </div>
       <div class="toggles">
         <button data-act="active">${c.active ? '활동 마감하기' : '다시 열기'}</button>
         <button data-act="office" class="${c.officeOpen ? 'warn' : 'act'}">${c.officeOpen ? '출원 체험 잠그기 🔒' : '출원 체험 열기 🔓'}</button>
+        <button data-act="slides" class="${c.slidesOpen ? 'warn' : 'act'}">${c.slidesOpen ? '발표 연습 잠그기 🔒' : '발표 연습 열기 🎤'}</button>
       </div>
     </div>`).join('');
   document.querySelectorAll('.code-card').forEach(card => {
@@ -205,7 +207,9 @@ function renderCodes() {
     card.querySelectorAll('.toggles button').forEach(b => b.addEventListener('click', async e => {
       e.stopPropagation();
       const c = codes.find(x => x.code === code);
-      const patch = b.dataset.act === 'active' ? { active: !c.active } : { officeOpen: !c.officeOpen };
+      const patch = b.dataset.act === 'active' ? { active: !c.active }
+        : b.dataset.act === 'slides' ? { slidesOpen: !c.slidesOpen }
+        : { officeOpen: !c.officeOpen };
       b.disabled = true;
       try { await api('setCode', { code, ...patch }); await loadCodes(); }
       catch (err) { alert(err.message); b.disabled = false; }

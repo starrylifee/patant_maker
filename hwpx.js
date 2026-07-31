@@ -7,8 +7,25 @@ function esc(s) {
   return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
+// 한글은 저장된 lineseg 정보대로 첫 화면을 그리므로, 긴 문단은 줄 수만큼 lineseg를 넣어야
+// 줄바꿈되어 보인다. 글자 폭 근사(전각 1200, 반각 600)로 각 줄의 시작 글자 위치를 추정한다.
+function linesegs(text, firstFlags) {
+  text = String(text || '');
+  const MAXW = 44000; // 실제 폭(46772)보다 약간 좁게 잡아 넘침을 방지
+  const starts = [0];
+  let w = 0;
+  for (let i = 0; i < text.length; i++) {
+    const cw = text.charCodeAt(i) > 0x2500 ? 1200 : 600;
+    if (w + cw > MAXW) { starts.push(i); w = 0; }
+    w += cw;
+  }
+  return '<hp:linesegarray>' + starts.map((pos, i) =>
+    `<hp:lineseg textpos="${pos}" vertpos="${i * 3360}" vertsize="1200" textheight="1200" baseline="1030" spacing="2160" horzpos="0" horzsize="46772" flags="${i === 0 ? firstFlags : 393216}"/>`
+  ).join('') + '</hp:linesegarray>';
+}
+
 function pHead(text) {
-  return `<hp:p id="0" paraPrIDRef="2" styleIDRef="0" pageBreak="0" columnBreak="0" merged="0"><hp:run charPrIDRef="0"><hp:t>${esc(text)}</hp:t></hp:run><hp:linesegarray><hp:lineseg textpos="0" vertpos="0" vertsize="1200" textheight="1200" baseline="1030" spacing="2160" horzpos="0" horzsize="46772" flags="393216"/></hp:linesegarray></hp:p>`;
+  return `<hp:p id="0" paraPrIDRef="2" styleIDRef="0" pageBreak="0" columnBreak="0" merged="0"><hp:run charPrIDRef="0"><hp:t>${esc(text)}</hp:t></hp:run>${linesegs(text, 393216)}</hp:p>`;
 }
 
 function pBody(text) {
@@ -16,7 +33,7 @@ function pBody(text) {
   const lines = String(text || '').split(/\r?\n/).filter(l => l.trim() !== '');
   if (!lines.length) lines.push('');
   return lines.map(l =>
-    `<hp:p id="0" paraPrIDRef="3" styleIDRef="0" pageBreak="0" columnBreak="0" merged="0"><hp:run charPrIDRef="0"><hp:t>${esc(l)}</hp:t></hp:run><hp:linesegarray><hp:lineseg textpos="0" vertpos="0" vertsize="1200" textheight="1200" baseline="1030" spacing="2160" horzpos="0" horzsize="46772" flags="1441792"/></hp:linesegarray></hp:p>`
+    `<hp:p id="0" paraPrIDRef="3" styleIDRef="0" pageBreak="0" columnBreak="0" merged="0"><hp:run charPrIDRef="0"><hp:t>${esc(l)}</hp:t></hp:run>${linesegs(l, 1441792)}</hp:p>`
   ).join('');
 }
 

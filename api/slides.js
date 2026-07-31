@@ -1,4 +1,5 @@
-// 발표 슬라이드 데이터 — 교사 전용. 명세서를 AI가 발표 문구로 요약하고 세션에 캐시한다.
+// 발표 슬라이드 데이터 — 명세서를 AI가 발표 문구로 요약하고 세션에 캐시한다.
+// 교사(비밀번호)는 항상 열람, 학생(자기 sessionId)은 교사가 slidesOpen을 켠 코드만 열람.
 const { db, admin } = require('../lib/firebase');
 
 const SYSTEM = `너는 초등학생의 발명 발표 슬라이드 문구를 만드는 도우미다. 학생이 쓴 특허 명세서 초안을 재료로, 발표하기 좋은 짧은 문구로 다듬는다.
@@ -17,12 +18,19 @@ module.exports = async (req, res) => {
     const { password, sessionId } = req.body || {};
     const PW = process.env.TEACHER_PASSWORD;
     if (!PW) return res.status(500).json({ error: '서버에 TEACHER_PASSWORD가 설정되지 않았어요.' });
-    if (password !== PW) return res.status(401).json({ error: '비밀번호가 틀렸어요.' });
+    const isTeacher = typeof password === 'string' && password.length > 0;
+    if (isTeacher && password !== PW) return res.status(401).json({ error: '비밀번호가 틀렸어요.' });
     if (!sessionId) return res.status(400).json({ error: 'sessionId가 없어요.' });
 
     const sRef = db().collection('sessions').doc(sessionId);
     const sDoc = await sRef.get();
     if (!sDoc.exists) return res.status(404).json({ error: '학생 기록을 찾을 수 없어요.' });
+    if (!isTeacher) {
+      const codeDoc = await db().collection('codes').doc(String(sDoc.data().code || '')).get();
+      if (!codeDoc.exists || codeDoc.data().slidesOpen !== true) {
+        return res.status(423).json({ error: '아직 발표 연습 시간이 아니에요. 선생님이 문을 열어줄 때까지 기다려요.' });
+      }
+    }
     const d = sDoc.data().draft || {};
     if (!(d.title || '').trim() && !(d.solution || '').trim()) {
       return res.status(400).json({ error: '아직 명세서 내용이 없어서 슬라이드를 만들 수 없어요.' });
