@@ -67,23 +67,19 @@ const sid = params.get('sid');
 const studentMode = params.get('student') === '1';
 let slides = [], cur = 0;
 
-async function load(pw) {
+async function load() {
   $('#status').textContent = '슬라이드를 만들고 있어요...';
   try {
     const ttok = sessionStorage.getItem('ttok');
-    const body = studentMode ? { sessionId: sid }
-      : pw ? { password: pw, sessionId: sid }
-      : ttok ? { idToken: ttok, sessionId: sid }
-      : { sessionId: sid };
+    const body = studentMode || !ttok ? { sessionId: sid } : { idToken: ttok, sessionId: sid };
     const r = await fetch('/api/slides', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
     });
     const j = await r.json().catch(() => ({}));
-    if (r.status === 401 && !studentMode) { askPw('비밀번호가 틀렸어요.'); return; }
+    if (r.status === 401 && !studentMode) { $('#status').textContent = '로그인이 만료됐어요. 교사 대시보드에서 다시 열어 주세요.'; return; }
     if (r.status === 423) { askRetry(j.error); return; }
     if (!r.ok) throw new Error(j.error || '오류가 났어요.');
-    if (!studentMode && pw) sessionStorage.setItem('tpw', pw);
     build(j);
   } catch (e) {
     $('#status').textContent = e.message;
@@ -98,21 +94,6 @@ function askRetry(msg) {
   btn.textContent = '다시 확인하기';
   btn.addEventListener('click', () => load());
   $('#status').append(p, btn);
-}
-
-function askPw(msg) {
-  $('#status').innerHTML = '';
-  const p = document.createElement('div');
-  p.textContent = msg || '교사 비밀번호를 입력하세요.';
-  const inp = document.createElement('input');
-  inp.type = 'password';
-  const btn = document.createElement('button');
-  btn.textContent = '슬라이드 열기';
-  const go = () => load(inp.value);
-  btn.addEventListener('click', go);
-  inp.addEventListener('keydown', e => { if (e.key === 'Enter') go(); });
-  $('#status').append(p, inp, btn);
-  inp.focus();
 }
 
 function el(tag, cls, html) {
@@ -212,10 +193,8 @@ $('#deck').addEventListener('click', e => {
 });
 
 if (!sid) $('#status').textContent = '학생 정보가 없어요. 명세서 메이커의 ③단계에서 열어 주세요.';
-else if (studentMode) load();
-else if (sessionStorage.getItem('tpw')) load(sessionStorage.getItem('tpw'));
-else if (sessionStorage.getItem('ttok')) load();
-else askPw();
+else if (studentMode || sessionStorage.getItem('ttok')) load();
+else $('#status').textContent = '교사 대시보드의 🎤 발표 슬라이드 버튼으로 열어 주세요.';
 </script>
 </body>
 </html>

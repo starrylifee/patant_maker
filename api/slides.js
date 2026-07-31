@@ -16,8 +16,8 @@ const SYSTEM = `너는 초등학생의 발명 발표 슬라이드 문구를 만�
 module.exports = async (req, res) => {
   if (req.method !== 'POST') return res.status(405).json({ error: 'POST only' });
   try {
-    const { password, idToken, sessionId } = req.body || {};
-    const isTeacherReq = (typeof password === 'string' && password.length > 0) || (typeof idToken === 'string' && idToken.length > 0);
+    const { idToken, sessionId } = req.body || {};
+    const isTeacherReq = typeof idToken === 'string' && idToken.length > 0;
     if (!sessionId) return res.status(400).json({ error: 'sessionId가 없어요.' });
 
     let auth = null;
