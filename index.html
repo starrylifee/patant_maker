@@ -139,6 +139,7 @@
   #drawzone { width: 420px; min-height: 340px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; border: 3px dashed var(--line); cursor: pointer; text-align: center; }
   #drawzone img { max-width: 100%; max-height: 280px; border-radius: 8px; }
   #savedNote { position: fixed; right: 18px; bottom: 14px; font-size: 13px; color: #888; opacity: 0; transition: opacity .3s; }
+  #shrinkNote { position: fixed; left: 50%; transform: translateX(-50%); bottom: 20px; max-width: 520px; background: #fff4f2; border: 2px solid var(--danger, #c0392b); color: #a33025; font-size: 14.5px; font-weight: bold; padding: 12px 18px; border-radius: 12px; box-shadow: 0 6px 20px rgba(0,0,0,.15); opacity: 0; pointer-events: none; transition: opacity .3s; z-index: 50; }
 </style>
 </head>
 <body>
@@ -321,6 +322,7 @@
   </main>
 </section>
 <div id="savedNote">저장됨 ✓</div>
+<div id="shrinkNote"></div>
 
 <script src="/jszip.min.js"></script>
 <script src="/hwpx.js"></script>
@@ -601,6 +603,7 @@ function restoreSession(r) {
     for (const k of DRAFT_KEYS) {
       if (r.draft[k]) { $('#f_' + k).value = r.draft[k]; hasDraft = true; }
     }
+    seedPeaks();
   }
   if (r.idea) {
     idea = {
@@ -720,6 +723,7 @@ async function fillDrafts() {
   try {
     const r = await api('draft', { sessionId: session.id, draft: d });
     for (const k of targets) if (r[k]) $('#f_' + k).value = r[k];
+    seedPeaks();
     saveDraft();
   } catch (e) {
     addMsg('sys', e.message);
@@ -730,7 +734,27 @@ async function fillDrafts() {
 }
 $('#btnDrafts').addEventListener('click', fillDrafts);
 let saveTimer = null;
+// 실수로 내용을 왕창 지우면 경고 — 지운 항목은 심사 점수가 내려갈 수 있음 (칸마다 한 번만)
+const fieldPeak = {}, fieldWarned = {};
+function seedPeaks() {
+  for (const k of DRAFT_KEYS) fieldPeak[k] = Math.max(fieldPeak[k] || 0, $('#f_' + k).value.trim().length);
+}
+let shrinkTimer = null;
+function warnShrink(k) {
+  const label = document.querySelector('#f_' + k).closest('.field').querySelector('label').firstChild.textContent.trim();
+  $('#shrinkNote').textContent = `⚠️ ${label} 칸 내용이 많이 줄었어요. 지우면 심사 점수가 내려갈 수 있어요! 실수라면 Ctrl+Z로 되돌려요.`;
+  $('#shrinkNote').style.opacity = 1;
+  clearTimeout(shrinkTimer);
+  shrinkTimer = setTimeout(() => $('#shrinkNote').style.opacity = 0, 6000);
+}
 document.querySelectorAll('#editor textarea').forEach(t => t.addEventListener('input', () => {
+  const k = t.id.replace('f_', '');
+  const len = t.value.trim().length;
+  if (len > (fieldPeak[k] || 0)) fieldPeak[k] = len;
+  else if (!fieldWarned[k] && (fieldPeak[k] || 0) >= 60 && len < fieldPeak[k] * 0.5) {
+    fieldWarned[k] = true;
+    warnShrink(k);
+  }
   clearTimeout(saveTimer);
   saveTimer = setTimeout(saveDraft, 2000);
 }));
