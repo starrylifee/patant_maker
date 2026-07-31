@@ -9,60 +9,156 @@
 <meta property="og:image" content="/og.png">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏛️</text></svg>">
 <style>
-  :root { --blue: #1d5d9b; --navy: #14487a; --deep: #0e3355; --line: #d5dde6; --bg: #f5f7fa; --red: #c0392b; --ok: #2e9e5b; --amber: #f5a623; }
+  :root { --blue: #2e6b9f; --navy: #14487a; --deep: #0e3355; --teal: #1d4a52; --line: #d5dde6; --bg: #f5f7fa; --red: #c0392b; --ok: #2e9e5b; --amber: #f5a623; }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: "맑은 고딕", "Malgun Gothic", sans-serif; background: var(--bg); color: #222; font-size: 17px; }
   button { font-family: inherit; cursor: pointer; border: none; }
-  input { font-family: inherit; font-size: 18px; border: 2px solid var(--line); border-radius: 6px; padding: 10px 12px; }
+  input, select { font-family: inherit; font-size: 17px; border: 1px solid #b9c4d0; border-radius: 4px; padding: 9px 11px; }
   input:focus { outline: none; border-color: var(--blue); }
   .hidden { display: none !important; }
 
   /* 교육용 배너 */
   #eduBanner { background: #fff3cd; color: #7a5c00; text-align: center; font-size: 15px; font-weight: bold; padding: 7px; border-bottom: 1px solid #eadfb0; }
 
-  /* 사이트 헤더 */
-  #siteHead { background: #fff; border-bottom: 1px solid var(--line); }
-  .head-inner { max-width: 1080px; margin: 0 auto; display: flex; align-items: center; gap: 16px; padding: 14px 20px; }
-  .logo { display: flex; align-items: center; gap: 8px; font-size: 24px; font-weight: bold; color: var(--navy); }
-  .logo .mark { font-size: 26px; }
+  /* ── 실제 특허로풍 헤더 ── */
+  #utilBar { background: #fff; border-bottom: 1px solid #eef1f5; }
+  #utilBar .inner { max-width: 1100px; margin: 0 auto; padding: 6px 20px; display: flex; font-size: 13.5px; color: #667; }
+  #utilBar .r { margin-left: auto; display: flex; gap: 14px; align-items: center; }
+  #utilBar .r b { color: var(--navy); }
+  #siteHead { background: #fff; }
+  .head-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; gap: 16px; padding: 14px 20px; }
+  .logo { display: flex; align-items: center; gap: 9px; font-size: 26px; font-weight: bold; color: #333; letter-spacing: 1px; }
+  .logo svg { transform: rotate(-45deg); }
   .pill { display: flex; background: #eef2f7; border-radius: 30px; padding: 4px; }
-  .pill span { padding: 7px 22px; border-radius: 30px; font-size: 16px; color: #888; }
-  .pill span.on { background: var(--navy); color: #fff; font-weight: bold; }
-  #userBox { margin-left: auto; font-size: 14.5px; color: #555; text-align: right; line-height: 1.5; }
-  #userBox b { color: var(--navy); }
-  #menuBar { background: var(--blue); }
-  #menuBar .head-inner { padding: 0 20px; gap: 0; }
-  #menuBar span { color: #dce8f5; padding: 13px 26px; font-size: 16.5px; }
-  #menuBar span.on { background: var(--navy); color: #fff; font-weight: bold; }
+  .pill span { padding: 7px 24px; border-radius: 30px; font-size: 16px; color: #888; }
+  .pill span.on { background: var(--deep); color: #fff; font-weight: bold; }
+  .head-links { margin-left: auto; display: flex; gap: 8px; }
+  .head-links span { border: 1px solid #b9c4d0; border-radius: 4px; padding: 7px 12px; font-size: 13.5px; color: #456; background: #fff; }
+  .head-links span.k { color: #1a6fc4; border-color: #9fc3e4; }
+  #menuBar { background: var(--blue); position: relative; }
+  #menuBar .inner { max-width: 1100px; margin: 0 auto; padding: 0 20px; display: flex; align-items: center; }
+  #menuBar .ham { color: #cfe0ef; font-size: 20px; padding: 12px 18px; background: rgba(0,0,0,.12); }
+  #menuBar .m { color: #eaf2f9; padding: 13px 0; font-size: 17px; font-weight: bold; flex: 1; text-align: center; }
+  #menuBar .m.on { background: var(--navy); }
+  #menuBar .m.clickable { cursor: pointer; outline: 3px dashed var(--amber); outline-offset: -3px; animation: blink 1.2s infinite; }
+  @keyframes blink { 50% { outline-color: transparent; } }
+  #menuBar .zoom { color: #cfe0ef; padding: 0 12px; font-size: 18px; }
 
   /* 진행 표시 */
-  #progress { max-width: 1080px; margin: 18px auto 0; padding: 0 20px; display: flex; gap: 6px; }
+  #progress { max-width: 1100px; margin: 18px auto 0; padding: 0 20px; display: flex; gap: 6px; }
   #progress div { flex: 1; text-align: center; font-size: 14px; color: #99a5b3; padding: 8px 4px; background: #fff; border: 1px solid var(--line); border-radius: 8px; }
   #progress div.on { background: var(--navy); border-color: var(--navy); color: #fff; font-weight: bold; }
   #progress div.done { background: #e7f3ec; border-color: #bfe0cd; color: var(--ok); }
 
   /* 화면 공통 */
-  .screen { max-width: 1080px; margin: 18px auto 40px; padding: 0 20px; }
-  .card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 30px 36px; }
-  .card h2 { color: var(--navy); font-size: 23px; margin-bottom: 8px; }
-  .card .desc { color: #667; font-size: 15px; line-height: 1.7; margin-bottom: 22px; }
-  .row { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
-  .row label { width: 150px; font-weight: bold; color: var(--navy); font-size: 16px; flex-shrink: 0; }
-  .btn-navy { background: var(--navy); color: #fff; font-size: 18px; font-weight: bold; padding: 13px 30px; border-radius: 8px; }
+  .screen { max-width: 1100px; margin: 18px auto 40px; padding: 0 20px; }
+  .card { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 28px 34px; }
+  .card h2 { color: var(--navy); font-size: 22px; margin-bottom: 8px; }
+  .card .desc { color: #667; font-size: 15px; line-height: 1.7; margin-bottom: 20px; }
+  .btn-navy { background: var(--navy); color: #fff; font-size: 17px; font-weight: bold; padding: 12px 28px; border-radius: 6px; }
   .btn-navy:disabled { background: #a5b3c2; cursor: default; }
-  .btn-line { background: #fff; color: var(--navy); border: 2px solid var(--navy); font-size: 17px; font-weight: bold; padding: 11px 26px; border-radius: 8px; }
-  .btn-area { text-align: center; margin-top: 26px; }
-  .notice { background: #f4f8fc; border: 1px solid #d8e6f3; border-radius: 8px; padding: 14px 18px; font-size: 14.5px; color: #456; line-height: 1.7; }
+  .btn-line { background: #fff; color: var(--navy); border: 2px solid var(--navy); font-size: 16px; font-weight: bold; padding: 10px 22px; border-radius: 6px; }
+  .btn-blue { background: var(--blue); color: #fff; font-size: 15.5px; font-weight: bold; padding: 10px 20px; border-radius: 4px; }
+  .btn-area { text-align: center; margin-top: 24px; }
+  .notice { background: #f4f8fc; border: 1px solid #d8e6f3; border-radius: 8px; padding: 13px 17px; font-size: 14.5px; color: #456; line-height: 1.7; }
 
   /* 배움 카드 */
-  .learn { background: #eef6ee; border: 1px solid #cfe6d4; border-radius: 10px; padding: 15px 18px; margin-bottom: 20px; font-size: 15.5px; line-height: 1.8; color: #2c4a35; }
+  .learn { background: #eef6ee; border: 1px solid #cfe6d4; border-radius: 10px; padding: 14px 18px; margin-bottom: 18px; font-size: 15.5px; line-height: 1.8; color: #2c4a35; }
   .learn b.t { display: block; color: #1e6b3a; font-size: 16px; margin-bottom: 4px; }
 
   /* 입장 게이트 */
   #gateCard { max-width: 520px; margin: 40px auto; text-align: center; }
-  #gateCard input { font-size: 20px; text-align: center; width: 100%; margin-bottom: 12px; }
+  #gateCard input { font-size: 20px; text-align: center; width: 100%; margin-bottom: 12px; padding: 12px; }
   #gateMsg { min-height: 24px; font-size: 15px; margin-top: 12px; color: var(--red); line-height: 1.6; }
   #gateLocked { background: #fdf1ef; border: 1px solid #f0ccc6; border-radius: 10px; padding: 18px; font-size: 16.5px; color: #8a3a2e; line-height: 1.8; margin-top: 14px; }
+
+  /* 실명확인 폼 */
+  .gov-form { border: 1px solid var(--line); border-radius: 6px; padding: 26px 30px; }
+  .gov-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .gov-row label { width: 160px; font-size: 15.5px; color: #334; flex-shrink: 0; }
+  .gov-row label .req { color: var(--red); }
+  .applicant-types { display: flex; gap: 10px; margin-bottom: 22px; }
+  .applicant-types div { flex: 1; text-align: center; border: 1px solid var(--line); border-radius: 6px; padding: 14px 6px; font-size: 14px; color: #99a; }
+  .applicant-types div.on { background: var(--navy); color: #fff; font-weight: bold; border-color: var(--navy); }
+  .applicant-types .ico { font-size: 26px; display: block; margin-bottom: 6px; }
+  .fake-tag { display: inline-block; background: #fff3cd; color: #7a5c00; font-size: 12.5px; font-weight: bold; border-radius: 4px; padding: 2px 8px; margin-left: 8px; }
+
+  /* 로그인 카드 3개 */
+  .login-grid { display: flex; gap: 0; border-radius: 8px; overflow: hidden; }
+  .login-card { flex: 1; padding: 30px 24px; color: #fff; display: flex; flex-direction: column; gap: 14px; min-height: 300px; }
+  .login-card h3 { font-size: 20px; }
+  .login-card p { font-size: 14px; opacity: .85; line-height: 1.65; flex: 1; }
+  .login-card button { background: rgba(0,0,0,.25); border: 1px solid rgba(255,255,255,.55); color: #fff; font-size: 16.5px; font-weight: bold; padding: 13px; border-radius: 2px; }
+  .login-card button:hover { background: rgba(0,0,0,.4); }
+  .lc1 { background: #17456e; } .lc2 { background: #16808f; } .lc3 { background: #0e3355; }
+  .simple-icons { display: flex; gap: 7px; }
+  .simple-icons span { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; color: #fff; }
+
+  /* 로그인 후 메인 */
+  .todo-grid { display: flex; gap: 14px; }
+  .todo-card { flex: 1; background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 20px 24px; }
+  .todo-card h3 { color: #223; font-size: 17px; margin-bottom: 12px; }
+  .todo-card .li { display: flex; font-size: 14.5px; color: #556; padding: 6px 0; border-bottom: 1px dashed #eef1f5; }
+  .todo-card .li b { margin-left: auto; color: var(--blue); }
+  .menu-panel { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 24px 28px; margin-top: 16px; }
+  .menu-panel h3 { color: var(--navy); font-size: 19px; margin-bottom: 14px; }
+  .write-cards { display: flex; gap: 14px; }
+  .write-card { flex: 1; border: 1px solid var(--line); border-radius: 8px; padding: 20px; display: flex; flex-direction: column; gap: 8px; }
+  .write-card b { font-size: 17px; color: #223; }
+  .write-card p { font-size: 14px; color: #667; line-height: 1.6; flex: 1; }
+  .write-card.dis { opacity: .55; }
+  .type-grid { display: flex; gap: 12px; }
+  .type-grid button { flex: 1; padding: 22px 10px; font-size: 18px; font-weight: bold; border-radius: 8px; }
+  .type-grid .t-on { background: var(--navy); color: #fff; }
+  .type-grid .t-off { background: #fff; color: #99a; border: 1px solid var(--line); cursor: default; }
+
+  /* ── Web 작성/제출 ── */
+  #webBand { background: linear-gradient(100deg, #12333c, #1d4a52 55%, #16404a); color: #fff; }
+  #webBand .inner { max-width: 1100px; margin: 0 auto; padding: 22px 20px; display: flex; align-items: center; gap: 14px; }
+  #webBand .wtitle { font-size: 30px; font-weight: bold; }
+  #webBand .wtitle .w { color: #7fd4e2; font-style: italic; }
+  #webBand .r { margin-left: auto; display: flex; gap: 8px; }
+  #webBand .r button { background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.4); color: #fff; font-size: 14px; padding: 9px 14px; border-radius: 3px; }
+  #formTop { max-width: 1100px; margin: 14px auto 0; padding: 0 20px; display: flex; align-items: center; gap: 8px; }
+  #formTop h2 { font-size: 21px; color: #223; border-left: 4px solid var(--navy); padding-left: 10px; }
+  #formTop .req-note { font-size: 13px; color: var(--red); margin-left: 6px; }
+  #formTop .tbtns { margin-left: auto; display: flex; gap: 6px; }
+  #formTop .tbtns button { font-size: 13.5px; padding: 8px 12px; border-radius: 3px; color: #fff; }
+  .tb1 { background: #2e9e8f; } .tb2 { background: #40597a; } .tb3 { background: #40597a; } .tb4 { background: #40597a; } .tb5 { background: var(--deep); font-weight: bold; }
+  #formLayout { max-width: 1100px; margin: 14px auto 40px; padding: 0 20px; display: flex; gap: 16px; align-items: flex-start; }
+  #sideNav { width: 168px; flex-shrink: 0; background: #f2f5f8; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+  #sideNav div { padding: 11px 16px; font-size: 14.5px; color: #556; border-bottom: 1px solid #e4e9ef; cursor: pointer; }
+  #sideNav div:hover { background: #e8eef4; }
+  #sideNav div.on { background: var(--navy); color: #fff; font-weight: bold; }
+  #sideNav div.done::after { content: " ✓"; color: var(--ok); font-weight: bold; }
+  #sideNav div.on.done::after { color: #9fe3bb; }
+  #sideNav .req::before { content: "* "; color: var(--red); }
+  #sideNav div.on.req::before { color: #ffb3a7; }
+  #formBody { flex: 1; }
+  .fsec-title { display: flex; align-items: center; border-bottom: 2px solid #223; padding-bottom: 8px; margin-bottom: 16px; }
+  .fsec-title h2 { font-size: 19px; color: #223; }
+  .fsec-title .req { color: var(--red); margin-left: 4px; }
+  .fee-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+  .fee-table th, .fee-table td { border: 1px solid var(--line); padding: 11px 14px; font-size: 15.5px; }
+  .fee-table th { background: #f4f8fc; color: #334; width: 170px; text-align: left; font-weight: bold; }
+  .fee-table td b.money { font-size: 18px; }
+  .file-pick { border: 2px dashed var(--line); border-radius: 8px; padding: 20px; text-align: center; color: #789; cursor: pointer; font-size: 16px; }
+  .file-pick:hover { border-color: var(--blue); }
+  .file-pick.picked { border-style: solid; border-color: var(--ok); color: var(--ok); font-weight: bold; background: #f2faf5; }
+  .radio-row { display: flex; gap: 26px; font-size: 16px; padding: 6px 2px; }
+  .radio-row label { display: flex; align-items: center; gap: 7px; }
+  .radio-row input { width: 18px; height: 18px; accent-color: var(--navy); }
+
+  /* 접수증 */
+  #receipt { max-width: 640px; margin: 0 auto; background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 40px 46px; }
+  #receipt .r-top { text-align: center; margin-bottom: 26px; }
+  #receipt .r-top .big { font-size: 46px; }
+  #receipt h2 { color: var(--navy); font-size: 26px; margin-top: 6px; }
+  #receipt table { width: 100%; border-collapse: collapse; margin: 10px 0 20px; }
+  #receipt th, #receipt td { border: 1px solid var(--line); padding: 13px 16px; font-size: 16.5px; text-align: left; }
+  #receipt th { background: #f4f8fc; color: var(--navy); width: 150px; }
+  #receipt .appno { font-size: 20px; font-weight: bold; color: var(--red); letter-spacing: 1px; }
+  .stamp { text-align: center; color: var(--red); border: 3px solid var(--red); border-radius: 8px; display: inline-block; padding: 6px 18px; font-size: 18px; font-weight: bold; transform: rotate(-6deg); opacity: .85; }
 
   /* 정리 퀴즈 */
   .quiz { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 22px 26px; margin-bottom: 16px; }
@@ -73,58 +169,41 @@
   .quiz .opt.wrong { border-color: var(--red); background: #fdf1ef; }
   .quiz .fb { min-height: 22px; font-size: 14.5px; margin-top: 4px; line-height: 1.6; }
 
-  /* 팝업 */
-  #popupWrap { position: fixed; inset: 0; background: rgba(0,0,0,.45); display: flex; align-items: center; justify-content: center; z-index: 50; }
-  #popup { background: #fff; border-radius: 10px; width: 520px; overflow: hidden; box-shadow: 0 18px 50px rgba(0,0,0,.3); }
-  #popup .p-head { background: var(--blue); color: #fff; font-size: 18px; font-weight: bold; padding: 14px 20px; }
-  #popup .p-body { padding: 24px 22px; font-size: 16px; line-height: 1.8; }
+  /* 팝업(작은 안내) */
+  #popupWrap { position: fixed; inset: 0; background: rgba(0,0,0,.45); display: flex; align-items: center; justify-content: center; z-index: 60; }
+  #popup { background: #fff; border-radius: 8px; width: 540px; overflow: hidden; box-shadow: 0 18px 50px rgba(0,0,0,.3); }
+  #popup .p-head { background: var(--blue); color: #fff; font-size: 17.5px; font-weight: bold; padding: 13px 20px; }
+  #popup .p-body { padding: 24px 24px; font-size: 16px; line-height: 1.8; }
   #popup .p-foot { text-align: center; padding: 0 0 20px; }
 
-  /* 로그인 카드 3개 */
-  .login-grid { display: flex; gap: 14px; }
-  .login-card { flex: 1; border-radius: 10px; padding: 24px 20px; color: #fff; display: flex; flex-direction: column; gap: 12px; }
-  .login-card h3 { font-size: 19px; }
-  .login-card p { font-size: 14px; opacity: .85; line-height: 1.6; flex: 1; }
-  .login-card button { background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.5); color: #fff; font-size: 16.5px; font-weight: bold; padding: 12px; border-radius: 8px; }
-  .login-card button:hover { background: rgba(255,255,255,.28); }
-  .lc1 { background: #17456e; } .lc2 { background: #1d6fa5; } .lc3 { background: #0e3355; }
-  .simple-icons { display: flex; gap: 6px; }
-  .simple-icons span { width: 34px; height: 34px; border-radius: 50%; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 17px; }
+  /* 큰 모달(인증서·면제감면·발명자) */
+  #modalWrap { position: fixed; inset: 0; background: rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center; z-index: 55; }
+  #modal { background: #fff; border-radius: 6px; width: 620px; max-height: 88vh; overflow: auto; box-shadow: 0 18px 50px rgba(0,0,0,.35); }
+  #modal .m-head { background: #1a5c96; color: #fff; font-size: 17.5px; font-weight: bold; padding: 13px 20px; display: flex; }
+  #modal .m-head .x { margin-left: auto; cursor: pointer; font-weight: normal; }
+  #modal .m-body { padding: 20px 24px; font-size: 15.5px; line-height: 1.7; }
+  .cert-banner { background: linear-gradient(100deg, #123a6b, #2465ad); color: #fff; text-align: center; font-size: 24px; font-weight: bold; padding: 14px; border-radius: 4px; margin-bottom: 14px; font-style: italic; }
+  .cert-banner small { font-size: 12px; display: block; font-style: normal; opacity: .8; }
+  .cert-locs { display: flex; gap: 8px; margin-bottom: 14px; }
+  .cert-locs div { flex: 1; text-align: center; border: 1px solid var(--line); border-radius: 4px; padding: 10px 4px; font-size: 12.5px; color: #789; }
+  .cert-locs div.on { background: #e3f0fb; border-color: #7fb4e2; color: var(--navy); font-weight: bold; }
+  .cert-locs .ico { font-size: 22px; display: block; margin-bottom: 4px; }
+  .cert-list { border: 1px solid var(--line); border-radius: 4px; margin-bottom: 14px; }
+  .cert-list .h { display: flex; background: #f4f8fc; font-size: 13px; color: #556; font-weight: bold; border-bottom: 1px solid var(--line); }
+  .cert-list .h span, .cert-list .r span { flex: 1; padding: 8px 10px; }
+  .cert-list .r { display: flex; font-size: 13.5px; cursor: pointer; }
+  .cert-list .r.sel { background: #e3f0fb; font-weight: bold; }
+  .ex-item { display: flex; align-items: center; gap: 10px; border-bottom: 1px solid #eef1f5; padding: 9px 4px; font-size: 14px; color: #445; }
+  .ex-item input[type=checkbox] { width: 19px; height: 19px; accent-color: var(--ok); flex-shrink: 0; }
+  .ex-item .cnt { margin-left: auto; width: 56px; text-align: center; font-size: 14px; padding: 5px; flex-shrink: 0; }
+  .ex-item.hit { background: #f2faf5; }
 
-  /* 출원서 폼 */
-  #formLayout { display: flex; gap: 16px; align-items: flex-start; }
-  #sideNav { width: 170px; flex-shrink: 0; background: #fff; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
-  #sideNav div { padding: 12px 16px; font-size: 15px; color: #556; border-bottom: 1px solid #eef1f5; }
-  #sideNav div.on { background: var(--navy); color: #fff; font-weight: bold; }
-  #sideNav div.done::after { content: " ✓"; color: var(--ok); font-weight: bold; }
-  #sideNav div.on.done::after { color: #9fe3bb; }
-  #formBody { flex: 1; }
-  .fee-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
-  .fee-table th, .fee-table td { border: 1px solid var(--line); padding: 12px 14px; font-size: 16px; }
-  .fee-table th { background: #f4f8fc; color: var(--navy); width: 170px; text-align: left; }
-  .fee-table td b.money { font-size: 19px; }
-  .exempt { border: 2px solid var(--line); border-radius: 10px; padding: 14px 18px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; cursor: pointer; font-size: 16.5px; }
-  .exempt input { width: 22px; height: 22px; accent-color: var(--ok); }
-  .exempt.checked { border-color: var(--ok); background: #f2faf5; }
-  #feeFinal { font-size: 21px; color: var(--red); font-weight: bold; }
-  #feeFinal.free { color: var(--ok); }
-  .file-pick { border: 2px dashed var(--line); border-radius: 10px; padding: 20px; text-align: center; color: #789; cursor: pointer; font-size: 16px; }
-  .file-pick:hover { border-color: var(--blue); }
-  .file-pick.picked { border-style: solid; border-color: var(--ok); color: var(--ok); font-weight: bold; background: #f2faf5; }
-
-  /* 접수증 */
-  #receipt { max-width: 640px; margin: 0 auto; background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 40px 46px; }
-  #receipt .r-top { text-align: center; margin-bottom: 26px; }
-  #receipt .r-top .big { font-size: 46px; }
-  #receipt h2 { color: var(--navy); font-size: 26px; margin-top: 6px; }
-  #receipt table { width: 100%; border-collapse: collapse; margin: 10px 0 20px; }
-  #receipt th, #receipt td { border: 1px solid var(--line); padding: 13px 16px; font-size: 17px; text-align: left; }
-  #receipt th { background: #f4f8fc; color: var(--navy); width: 150px; }
-  #receipt .appno { font-size: 20px; font-weight: bold; color: var(--red); letter-spacing: 1px; }
-  .stamp { text-align: center; color: var(--red); border: 3px solid var(--red); border-radius: 8px; display: inline-block; padding: 6px 18px; font-size: 18px; font-weight: bold; transform: rotate(-6deg); opacity: .85; }
+  /* 토스트 */
+  #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #223; color: #fff; padding: 12px 26px; border-radius: 30px; font-size: 15.5px; z-index: 70; transition: opacity .3s; opacity: 0; pointer-events: none; }
+  #toast.show { opacity: 1; }
 
   @media print {
-    #eduBanner, #siteHead, #menuBar, #progress, .no-print { display: none !important; }
+    #eduBanner, #utilBar, #siteHead, #menuBar, #progress, #webBand, .no-print { display: none !important; }
     body { background: #fff; }
     #receipt { border: none; }
   }
@@ -134,24 +213,43 @@
 
 <div id="eduBanner">🎓 여기는 학습용 모의 사이트예요. 진짜 특허청(특허로)이 아니고, 어떤 정보도 저장되지 않아요.</div>
 
-<div id="siteHead">
-  <div class="head-inner">
-    <div class="logo"><span class="mark">🏛️</span>특허로 연습장</div>
-    <div class="pill"><span class="on">출원</span><span>심판</span></div>
-    <div id="userBox">로그인이 필요합니다</div>
+<!-- 상단 유틸 바 -->
+<div id="utilBar">
+  <div class="inner">
+    <span>처음이신가요 · 챗봇상담 · 지식재산탐구생활</span>
+    <span class="r" id="utilRight">👤 로그인 · 특허고객등록 · 인증서관리 · 화면크기 ⊖ ⊕</span>
   </div>
 </div>
-<div id="menuBar">
+
+<!-- 로고 헤더 -->
+<div id="siteHead">
   <div class="head-inner">
-    <span>My특허로</span><span class="on">신청/제출</span><span>조회/발급</span><span>수수료관리</span><span>고객지원</span>
+    <div class="logo">
+      <svg width="34" height="34" viewBox="0 0 40 40">
+        <path d="M20 0 A20 20 0 0 1 20 40 A10 10 0 0 1 20 20 A10 10 0 0 0 20 0Z" fill="#c0392b"/>
+        <path d="M20 0 A20 20 0 0 0 20 40 A10 10 0 0 0 20 20 A10 10 0 0 1 20 0Z" fill="#1d5d9b"/>
+      </svg>
+      특허로 <span style="font-size:13px; color:var(--amber); font-weight:bold; align-self:flex-start">연습장</span>
+    </div>
+    <div class="pill"><span class="on">출원</span><span>심판</span></div>
+    <div class="head-links"><span>특허청 바로가기</span><span class="k">지식재산정보검색(KIPRIS) 바로가기</span></div>
+  </div>
+</div>
+
+<!-- 파란 메뉴 바 -->
+<div id="menuBar">
+  <div class="inner">
+    <span class="ham">≡</span>
+    <span class="m">My특허로</span><span class="m" id="menuApply">신청/제출</span><span class="m">조회/발급</span><span class="m">수수료관리</span><span class="m">고객지원</span>
+    <span class="zoom">🔍</span>
   </div>
 </div>
 
 <div id="progress" class="hidden">
   <div data-p="1">① 특허고객번호 받기</div>
   <div data-p="2">② 로그인</div>
-  <div data-p="3">③ 출원서 작성</div>
-  <div data-p="4">④ 수수료</div>
+  <div data-p="3">③ 메뉴 찾아가기</div>
+  <div data-p="4">④ 출원서 작성</div>
   <div data-p="5">⑤ 제출 완료</div>
   <div data-p="6">⑥ 배운 내용 정리</div>
 </div>
@@ -169,138 +267,278 @@
   </div>
 </section>
 
-<!-- 화면1: 특허고객번호 부여신청 -->
+<!-- 화면1: 특허고객번호부여신청 (실명확인) -->
 <section class="screen hidden" id="s1">
   <div class="card">
-    <h2>1단계. 특허고객번호 부여신청</h2>
+    <h2>특허고객번호부여신청</h2>
     <div class="learn"><b class="t">📖 알아보기 — 특허고객번호란?</b>
-    특허청이 발명가 한 사람 한 사람에게 주는 <b>고유 번호</b>예요. 은행에 계좌번호가 있어야 돈을 맡기듯, 이 번호가 있어야 내 발명 기록을 특허청이 관리해 줄 수 있어요. 진짜 사이트에서는 주민등록번호로 본인을 확인하지만, 연습장에서는 별명만 있으면 돼요.</div>
-    <p class="desc">✏️ <b>해보기</b> — 별명을 쓰고 <b>발급확인</b>(이미 번호가 있는지 조회)을 한 다음, 새 번호를 신청해 보세요.</p>
-    <div class="row">
-      <label>신청인 구분</label>
-      <span style="background:var(--navy); color:#fff; padding:8px 18px; border-radius:6px; font-size:15px">국내자연인 (어린이 발명가)</span>
+    특허청이 발명가 한 사람 한 사람에게 주는 <b>고유 번호</b>예요. 은행에 계좌번호가 있어야 돈을 맡기듯, 이 번호가 있어야 내 발명 기록을 특허청이 관리해 줄 수 있어요. 진짜 사이트에서는 <b>주민등록번호</b>로 본인을 확인해요. 연습장에서는 <b>가상 번호</b>가 자동으로 만들어져요.</div>
+
+    <div class="applicant-types">
+      <div class="on"><span class="ico">🧑</span>국내자연인</div>
+      <div><span class="ico">🏢</span>국내법인</div>
+      <div><span class="ico">🌏</span>재외국민</div>
+      <div><span class="ico">🧑‍💼</span>외국인</div>
+      <div><span class="ico">🏛️</span>외국법인</div>
+      <div><span class="ico">📋</span>기타단체</div>
     </div>
-    <div class="row">
-      <label>성명(별명)</label>
-      <input id="inNick" placeholder="명세서 메이커에서 쓴 별명" maxlength="12" style="width:300px" autocomplete="off">
-      <button class="btn-line" id="btnCheck" style="padding:9px 20px; font-size:15.5px">발급확인</button>
+
+    <div class="gov-form">
+      <h3 style="font-size:17px; color:#223; margin-bottom:16px">2단계 특허고객 실명확인</h3>
+      <p style="font-size:13.5px; color:#778; line-height:1.7; margin-bottom:16px">
+        · 주민등록번호를 입력 후 <b>[발급확인]</b>을 통해 기존에 발급된 특허고객번호가 있는지 확인하시기 바랍니다.<br>
+        · 기존에 발급받은 특허고객번호가 <span style="color:var(--ok)">있는</span> 경우, 안내창에 표시된 번호를 이용하시기 바랍니다.<br>
+        · 기존에 발급받은 특허고객번호가 <span style="color:var(--red)">없는</span> 경우, 성명을 기재한 후 발급 절차를 계속 진행하시기 바랍니다.</p>
+      <div class="gov-row">
+        <label><span class="req">*</span> 주민등록번호</label>
+        <input id="inRrn" readonly style="width:200px; background:#f4f6f9; text-align:center; letter-spacing:1px">
+        <label style="width:auto; font-size:14px"><input type="checkbox" checked disabled style="width:16px; height:16px"> 마우스입력</label>
+        <span class="fake-tag">체험용 가상 번호 — 진짜 주민등록번호는 절대 쓰지 않아요!</span>
+      </div>
+      <div class="gov-row">
+        <label><span class="req">*</span> 성명(국문)</label>
+        <input id="inNick" placeholder="명세서 메이커에서 쓴 별명" maxlength="12" style="width:260px" autocomplete="off">
+        <button class="btn-blue" id="btnCheck">발급확인</button>
+      </div>
+      <div class="gov-row">
+        <label><span class="req">*</span> 성명(영문)</label>
+        <input id="inEng" readonly style="width:260px; background:#f4f6f9" value="INVENTOR, Junior">
+        <span style="font-size:13px; color:#99a">연습장에서는 자동으로 채워져요</span>
+      </div>
     </div>
-    <div class="notice">💡 <b>발급확인</b>이란? 예전에 이미 특허고객번호를 받은 적이 있는지 알아보는 거예요. 처음이라면 새로 받으면 돼요.</div>
-    <div class="btn-area"><button class="btn-navy" id="btnIssue" disabled>특허고객번호 신청하기</button></div>
+    <div class="notice" style="margin-top:14px">💡 <b>발급확인</b>이란? 예전에 이미 특허고객번호를 받은 적이 있는지 알아보는 거예요. 처음이라면 새로 받으면 돼요.</div>
+    <div class="btn-area">
+      <button class="btn-line" disabled style="opacity:.5">이전</button>
+      <button class="btn-navy" id="btnIssue" disabled>다음 (특허고객번호 신청)</button>
+    </div>
   </div>
 </section>
 
 <!-- 화면2: 로그인 -->
 <section class="screen hidden" id="s2">
-  <div class="card">
-    <h2>2단계. 로그인</h2>
+  <div class="card" style="padding-bottom:34px">
+    <h2 style="font-size:26px; color:#333; font-weight:normal">특허로홈페이지를 방문해 주신 여러분을 환영합니다.</h2>
+    <p class="desc">특허로 서비스는 로그인을 해야만 이용할 수 있습니다.</p>
     <div class="learn"><b class="t">📖 알아보기 — 왜 로그인이 필요할까?</b>
-    특허는 소중한 <b>재산</b>이에요. 다른 사람이 내 이름으로 마음대로 신청하거나 내 서류를 훔쳐보면 안 되겠죠? 그래서 어른들은 인증서나 휴대폰 앱으로 <b>"진짜 나"라는 것을 증명</b>한 뒤에만 들어갈 수 있어요.</div>
-    <p class="desc">✏️ <b>해보기</b> — 마음에 드는 로그인 방법을 하나 골라 눌러 보세요. (연습장이라 어떤 것을 눌러도 바로 로그인돼요)</p>
+    특허는 소중한 <b>재산</b>이에요. 다른 사람이 내 이름으로 마음대로 신청하거나 내 서류를 훔쳐보면 안 되겠죠? 그래서 어른들은 <b>인증서</b>나 휴대폰 앱으로 "진짜 나"라는 것을 증명한 뒤에만 들어갈 수 있어요.</div>
+    <p class="desc">✏️ <b>해보기</b> — 마음에 드는 로그인 방법을 하나 골라 눌러 보세요. 진짜처럼 인증 창이 떠요!</p>
     <div class="login-grid">
       <div class="login-card lc1">
         <h3>공동인증서 로그인</h3>
-        <p>컴퓨터에 저장된 인증서로 본인을 확인하는 어른들의 방법이에요.</p>
-        <button data-login="공동인증서">🔐 공동인증서로 로그인</button>
+        <p>특허고객으로 등록한 공동인증서로 로그인하세요. 컴퓨터에 저장된 인증서로 본인을 확인하는 방법이에요.</p>
+        <button data-login="cert">🔐 공동인증서로 로그인</button>
       </div>
       <div class="login-card lc2">
-        <h3>간편인증 (앱으로 로그인)</h3>
-        <p>카카오톡, PASS 같은 휴대폰 앱으로 확인하는 방법이에요.</p>
-        <div class="simple-icons"><span>💬</span><span>📱</span><span>🏦</span><span>✅</span></div>
-        <button data-login="간편인증">간편인증으로 로그인</button>
+        <h3>간편인증 <small style="font-size:13px">(앱으로 로그인하기)</small></h3>
+        <p>카카오톡, 통신사PASS, KB국민은행, 삼성패스, 네이버, 신한은행을 이용하여 로그인하실 수 있습니다.</p>
+        <div class="simple-icons">
+          <span style="background:#fee500; color:#3c1e1e">TALK</span><span style="background:#e6007e">PASS</span><span style="background:#ffb300; color:#5c3c00">Kb</span><span style="background:#1428a0">Pass</span><span style="background:#03c75a">N</span><span style="background:#0046ff">신한</span>
+        </div>
+        <button data-login="simple">간편인증</button>
       </div>
       <div class="login-card lc3">
         <h3>디지털원패스 로그인</h3>
-        <p>아이디 하나로 여러 정부 사이트를 쓰는 방법이에요.</p>
-        <button data-login="디지털원패스">🆔 디지털원패스로 로그인</button>
+        <p>하나의 아이디로 본인이 선택한 인증수단을 사용하여 안전하고 편리하게 여러 전자정부 서비스를 이용할 수 있는 인증 서비스입니다.</p>
+        <button data-login="onepass">🆔 디지털원패스로 로그인</button>
       </div>
     </div>
   </div>
 </section>
 
-<!-- 화면3: 웹작성/제출 선택 -->
+<!-- 화면3: 로그인 후 메인 + 메뉴 찾아가기 -->
 <section class="screen hidden" id="s3">
-  <div class="card">
-    <h2>3단계. Web 작성 / 제출 — 무엇을 출원할까?</h2>
-    <div class="learn"><b class="t">📖 알아보기 — 지식재산권의 네 가지 종류</b>
-    <b>특허</b>는 새로운 기술·아이디어, <b>실용신안</b>은 물건의 작은 개선, <b>디자인</b>은 물건의 모양, <b>상표</b>는 이름과 로고를 보호해요. 우리가 만든 것은 발명 아이디어니까 <b>특허</b>를 골라요.</div>
-    <p class="desc">✏️ <b>해보기</b> — 아래에서 알맞은 것을 눌러 보세요.</p>
-    <div class="login-grid" style="margin-bottom:22px">
-      <button class="btn-navy" style="flex:1; padding:20px" id="btnPatent">📄 특허</button>
-      <button class="btn-line" style="flex:1" disabled>실용신안</button>
-      <button class="btn-line" style="flex:1" disabled>디자인</button>
-      <button class="btn-line" style="flex:1" disabled>상표</button>
+  <div class="card" style="margin-bottom:16px; padding:22px 28px">
+    <h2 style="font-size:20px">출원 <span style="color:#889; font-weight:normal; font-size:16px">— 등록, 수수료 납부</span></h2>
+    <p class="desc" style="margin-bottom:14px">로그인 성공! 여기가 특허로의 첫 화면이에요. 아직 나의 할 일이 모두 <b>0건</b>이죠? 이제 출원서를 내러 가 봐요.</p>
+    <div class="todo-grid">
+      <div class="todo-card">
+        <h3>나의 할일 — 출원/심사</h3>
+        <div class="li">전자서명대상 <b>0건</b></div>
+        <div class="li">통지서 마감기한 <b>0건</b></div>
+        <div class="li">심사청구대상 <b>0건</b></div>
+        <div class="li">우선권증명서류 제출기한 <b>0건</b></div>
+      </div>
+      <div class="todo-card">
+        <h3>등록</h3>
+        <div class="li">전자서명대상 <b>0건</b></div>
+        <div class="li">설정등록대상 <b>0건</b></div>
+        <div class="li">연차등록대상 <b>0건</b></div>
+        <div class="li">분할납부대상 <b>0건</b></div>
+      </div>
+      <div class="todo-card">
+        <h3>PCT (국제출원)</h3>
+        <div class="li">통지서 마감기한 <b>0건</b></div>
+        <div class="li" style="border:none; color:#99a; font-size:13.5px; padding-top:12px">다른 나라에 내는 특허는 여기서 관리해요.</div>
+      </div>
     </div>
-    <div class="notice">특허는 <b>새로운 기술이나 아이디어</b>를 보호해 주는 권리예요. 발명품에 딱 맞는 선택이죠!</div>
+    <div class="notice" style="margin-top:16px" id="menuHint">✏️ <b>해보기</b> — 위쪽 파란 메뉴에서 반짝이는 <b>[신청/제출]</b>을 눌러 보세요!</div>
+  </div>
+
+  <!-- 신청/제출 메뉴 패널 -->
+  <div class="menu-panel hidden" id="applyPanel">
+    <h3>신청/제출 → 국내출원 → 출원서 등 서식작성</h3>
+    <div class="learn"><b class="t">📖 알아보기 — 서류는 어떻게 낼까?</b>
+    옛날에는 서류를 종이로 출력해서 특허청에 직접 갔지만, 지금은 인터넷으로 내요. 이것을 <b>전자출원</b>이라고 해요. 프로그램을 설치해서 쓰는 방법과 웹에서 바로 쓰는 방법 중, 우리는 <b>웹작성/제출</b>을 골라요.</div>
+    <div class="write-cards">
+      <div class="write-card dis">
+        <b>통합서식작성기(PKEAPS) &gt;</b>
+        <p>PC에 설치하신 서식작성기를 실행하여 출원서 및 중간서류, 등록서류, 심판서류 등을 작성하고 특허청에 제출할 수 있도록 지원합니다.</p>
+        <span style="font-size:13px; color:#b45">⛔ 프로그램 설치가 필요해서 연습장에서는 쓰지 않아요</span>
+      </div>
+      <div class="write-card" style="border-color:var(--navy); border-width:2px">
+        <b>웹작성/제출 &gt;</b>
+        <p>웹화면에서 출원서, 중간서류, 등록서류, 심판서류 등의 서식을 직접 작성하여 제출할 수 있습니다.</p>
+        <button class="btn-navy" id="btnWebWrite">웹작성/제출 시작하기</button>
+      </div>
+    </div>
+    <div id="typePick" class="hidden" style="margin-top:22px">
+      <h3>웹에서 서류 제출하기 — 무엇을 출원할까?</h3>
+      <div class="learn"><b class="t">📖 알아보기 — 지식재산권의 네 가지 종류</b>
+      <b>특허</b>는 새로운 기술·아이디어, <b>실용신안</b>은 물건의 작은 개선, <b>디자인</b>은 물건의 모양, <b>상표</b>는 이름과 로고를 보호해요. 우리가 만든 것은 발명 아이디어니까 <b>특허</b>를 골라요.</div>
+      <div class="type-grid">
+        <button class="t-on" id="btnPatent">특허</button>
+        <button class="t-off">실용신안</button>
+        <button class="t-off">디자인</button>
+        <button class="t-off">상표</button>
+      </div>
+    </div>
   </div>
 </section>
 
-<!-- 화면4: 특허출원서 작성 -->
-<section class="screen hidden" id="s4">
+<!-- 화면4: Web작성/제출 — 특허출원서 -->
+<section class="hidden" id="s4">
+  <div id="webBand">
+    <div class="inner">
+      <span class="wtitle"><span class="w">Web</span> 작성 / 제출</span>
+      <div class="r">
+        <button id="btnFormList">🗂 서식목록이동</button>
+        <button id="btnTempSave">💾 임시저장</button>
+      </div>
+    </div>
+  </div>
+  <div id="formTop">
+    <h2>특허출원서_특허출원</h2><span class="req-note">* 표시는 필수 입력사항입니다</span>
+    <div class="tbtns">
+      <button class="tb1" id="btnLocal">로컬에서 불러오기</button>
+      <button class="tb2" id="btnAuth">작성권한관리</button>
+      <button class="tb3" id="btnSample">서식샘플보기</button>
+      <button class="tb4" id="btnPreview">미리보기</button>
+      <button class="tb5" id="btnSign">작성완료 및 서명</button>
+    </div>
+  </div>
   <div id="formLayout">
     <div id="sideNav">
-      <div data-sec="a" class="on">출원인</div>
-      <div data-sec="b">발명의 명칭</div>
-      <div data-sec="c">발명자</div>
-      <div data-sec="d">첨부서류 (명세서)</div>
-      <div data-sec="e">수수료</div>
+      <div data-sec="ref">참조번호</div>
+      <div data-sec="a" class="on req">출원인</div>
+      <div data-sec="guard">법정대리인</div>
+      <div data-sec="agent">대리인</div>
+      <div data-sec="b" class="req">발명의 명칭</div>
+      <div data-sec="c" class="req">발명자</div>
+      <div data-sec="lang" class="req">출원언어</div>
+      <div data-sec="prio">우선권주장</div>
+      <div data-sec="e" class="req">수수료</div>
+      <div data-sec="d" class="req">첨부서류</div>
     </div>
     <div id="formBody">
-      <!-- a. 출원인 -->
+      <!-- 참조번호 -->
+      <div class="card fsec hidden" id="fref">
+        <div class="fsec-title"><h2>참조번호</h2></div>
+        <p class="desc">출원인이 스스로 붙이는 정리용 번호예요. 안 써도 되는 항목이라 우리 체험에서는 건너뛰어요.</p>
+        <div class="btn-area"><button class="btn-navy nextSec" data-next="a">출원인으로 →</button></div>
+      </div>
+      <!-- 출원인 -->
       <div class="card fsec" id="fa">
-        <h2>출원인 <span style="color:var(--red); font-size:16px">*</span></h2>
+        <div class="fsec-title"><h2>출원인</h2><span class="req">*</span></div>
         <div class="learn"><b class="t">📖 알아보기 — 출원인이란?</b>
         출원인은 <b>특허를 신청하고, 특허가 나오면 주인이 되는 사람</b>이에요. "출원(出願)"은 관청에 원서를 낸다는 뜻이에요.</div>
         <p class="desc">✏️ <b>해보기</b> — 아까 받은 특허고객번호가 자동으로 들어갔어요. 내 정보가 맞는지 확인하고 다음으로 가요.</p>
         <table class="fee-table">
-          <tr><th>성명(별명)</th><td id="apName"></td></tr>
+          <tr><th>성명/명칭</th><td id="apName"></td></tr>
           <tr><th>특허고객번호</th><td id="apNo"></td></tr>
+          <tr><th>지분</th><td>전부 (혼자 발명했으니까 100%!)</td></tr>
         </table>
         <div class="btn-area"><button class="btn-navy nextSec" data-next="b">다음 →</button></div>
       </div>
-      <!-- b. 발명의 명칭 -->
+      <!-- 법정대리인 -->
+      <div class="card fsec hidden" id="fguard">
+        <div class="fsec-title"><h2>법정대리인</h2></div>
+        <div class="learn"><b class="t">📖 알아보기 — 법정대리인이란?</b>
+        19세 미만 발명가가 <b>진짜로</b> 출원할 때는 부모님(법정대리인)이 대신 절차를 밟아 주셔야 해요. 여러분이 실제로 특허를 낸다면 부모님과 함께 하게 될 거예요. 연습장에서는 건너뛰어요.</div>
+        <div class="btn-area"><button class="btn-navy nextSec" data-next="b">다음 →</button></div>
+      </div>
+      <!-- 대리인 -->
+      <div class="card fsec hidden" id="fagent">
+        <div class="fsec-title"><h2>대리인</h2></div>
+        <div class="learn"><b class="t">📖 알아보기 — 변리사라는 직업</b>
+        출원을 대신 해 주는 전문가를 <b>변리사</b>라고 해요. 발명과 법을 모두 아는 멋진 직업이에요. 우리는 스스로 내는 중이니 건너뛰어요.</div>
+        <div class="btn-area"><button class="btn-navy nextSec" data-next="b">다음 →</button></div>
+      </div>
+      <!-- 발명의 명칭 -->
       <div class="card fsec hidden" id="fb">
-        <h2>발명의 명칭 <span style="color:var(--red); font-size:16px">*</span></h2>
-        <p class="desc">명세서에 쓴 발명품 이름을 그대로 써요.</p>
-        <input id="inTitle" placeholder="예: 줄 꼬임 방지 이어폰 케이스" style="width:100%; font-size:19px" autocomplete="off">
+        <div class="fsec-title"><h2>발명의 명칭</h2><span class="req">*</span></div>
+        <p class="desc">명세서에 쓴 발명품 이름을 그대로 써요. 사용불가 특수문자: <span style="color:var(--red)">&amp; ! @ # % ^</span></p>
+        <input id="inTitle" placeholder="예: 줄 꼬임 방지 이어폰 케이스" style="width:100%; font-size:19px; padding:12px" autocomplete="off">
         <div class="btn-area"><button class="btn-navy nextSec" data-next="c">다음 →</button></div>
       </div>
-      <!-- c. 발명자 -->
+      <!-- 발명자 -->
       <div class="card fsec hidden" id="fc">
-        <h2>발명자 <span style="color:var(--red); font-size:16px">*</span></h2>
+        <div class="fsec-title"><h2>발명자</h2><span class="req">*</span>
+          <button class="btn-blue" id="btnAddInventor" style="margin-left:auto">추가</button></div>
         <div class="learn"><b class="t">📖 알아보기 — 출원인과 발명자는 뭐가 다를까?</b>
         발명자는 <b>실제로 발명을 한 사람</b>이에요. 회사에서는 직원(발명자)이 발명하고 회사(출원인)가 신청하는 경우가 많아서 둘을 나누어 적어요.</div>
-        <p class="desc">✏️ <b>해보기</b> — 내가 발명하고 내가 신청하니까 <b>"출원인과 동일"</b>을 누르면 돼요.</p>
-        <button class="btn-line" id="btnSameInventor">👤 출원인과 동일</button>
-        <span id="inventorDone" class="hidden" style="color:var(--ok); font-weight:bold; margin-left:12px">발명자 등록 완료 ✓</span>
+        <p class="desc">✏️ <b>해보기</b> — 오른쪽 위 <b>[추가]</b> 버튼을 눌러 발명자를 등록해요.</p>
+        <table class="fee-table" id="inventorTable">
+          <tr><th style="width:auto; text-align:center">성명/명칭</th><th style="width:auto; text-align:center">특허고객번호</th><th style="width:auto; text-align:center">주소</th></tr>
+          <tr id="inventorEmpty"><td colspan="3" style="text-align:center; color:#99a">아직 발명자가 없어요 — [추가]를 눌러 보세요</td></tr>
+          <tr id="inventorRow" class="hidden"><td id="ivName" style="text-align:center"></td><td id="ivNo" style="text-align:center"></td><td style="text-align:center">○○초등학교</td></tr>
+        </table>
+        <div class="btn-area"><button class="btn-navy nextSec" data-next="lang" id="btnToLang" disabled>다음 →</button></div>
+      </div>
+      <!-- 출원언어 -->
+      <div class="card fsec hidden" id="flang">
+        <div class="fsec-title"><h2>출원언어</h2><span class="req">*</span></div>
+        <p class="desc">명세서를 어떤 말로 썼는지 골라요. 우리는 한국어로 썼으니 <b>국어</b>!</p>
+        <div class="radio-row">
+          <label><input type="radio" name="lang" checked> 국어</label>
+          <label><input type="radio" name="lang"> 영어</label>
+        </div>
+        <div class="btn-area"><button class="btn-navy nextSec" data-next="e">다음 →</button></div>
+      </div>
+      <!-- 우선권주장 -->
+      <div class="card fsec hidden" id="fprio">
+        <div class="fsec-title"><h2>우선권주장</h2></div>
+        <div class="learn"><b class="t">📖 알아보기 — 우선권이란?</b>
+        먼저 낸 출원을 기준으로 "내가 먼저 발명했어요!"라고 주장하는 제도예요. 우리는 첫 출원이니 건너뛰어요.</div>
+        <div class="btn-area"><button class="btn-navy nextSec" data-next="e">다음 →</button></div>
+      </div>
+      <!-- 수수료 -->
+      <div class="card fsec hidden" id="fe">
+        <div class="fsec-title"><h2>수수료</h2><span class="req">*</span>
+          <button style="margin-left:auto; background:var(--red); color:#fff; font-size:13.5px; font-weight:bold; padding:8px 14px; border-radius:16px" id="btnFeeTable">요금표</button></div>
+        <div class="learn"><b class="t">📖 알아보기 — 수수료는 왜 낼까?</b>
+        심사관이 내 발명을 검토하고 서류를 관리하는 데 돈이 들기 때문에, 출원할 때 나라에 <b>수수료</b>를 내요. 그런데 나라는 어린이·학생 발명가를 응원하려고 <b>수수료를 면제</b>해 주는 제도를 만들었어요.</div>
+        <p class="desc">✏️ <b>해보기</b> — <b>[면제감면대상]</b> 버튼을 눌러 나에게 해당하는 것을 찾아 체크해 보세요.</p>
+        <table class="fee-table">
+          <tr><th>출원료</th><td>전체면수 <b>1</b> 면 &nbsp; <b class="money">56,000</b> 원</td></tr>
+          <tr><th>심사청구료</th><td>청구항수 0 항 &nbsp; 0 원</td></tr>
+          <tr><th>우선권주장료</th><td>주장건수 0 건 &nbsp; 0 원</td></tr>
+          <tr><th>합계</th><td><b class="money">56,000</b> 원</td></tr>
+          <tr><th>면제 사유</th><td><span id="exReason" style="color:#99a">아직 없음</span>
+            <button class="btn-blue" id="btnExempt" style="float:right; background:#555; font-size:13px; padding:7px 12px; border-radius:16px">면제감면대상</button></td></tr>
+          <tr><th>면제후 수수료</th><td><b class="money" id="feeFinal" style="color:var(--red)">56,000</b> 원 <span id="feeMsg" style="font-size:14px; color:var(--ok); font-weight:bold; margin-left:8px"></span></td></tr>
+        </table>
+        <div class="notice" id="feeNotice" style="display:none">🎉 학생 발명가는 나라가 수수료를 <b>전부 면제</b>해 줘요! 여러분의 발명을 응원한다는 뜻이에요.</div>
         <div class="btn-area"><button class="btn-navy nextSec" data-next="d" id="btnToD" disabled>다음 →</button></div>
       </div>
-      <!-- d. 첨부서류 -->
+      <!-- 첨부서류 -->
       <div class="card fsec hidden" id="fd">
-        <h2>첨부서류 — 명세서 <span style="color:var(--red); font-size:16px">*</span></h2>
+        <div class="fsec-title"><h2>첨부서류 — 명세서</h2><span class="req">*</span></div>
         <div class="learn"><b class="t">📖 알아보기 — 명세서는 왜 붙일까?</b>
         특허청 심사관은 발명품 실물을 보지 못해요. <b>명세서가 내 발명을 설명하는 유일한 문서</b>라서, 명세서가 없으면 심사 자체를 할 수 없어요. 우리가 ①에서 명세서를 먼저 만든 이유예요.</div>
         <p class="desc">✏️ <b>해보기</b> — 아까 다운로드한 <b>한글(HWPX) 명세서 파일</b>을 골라 붙여요. 연습장이라 파일이 어디로 보내지지는 않고 이름만 확인해요.</p>
         <div class="file-pick" id="filePick">📎 여기를 눌러 명세서 파일 선택하기</div>
         <input type="file" id="fileInput" accept=".hwpx,.hwp" class="hidden">
-        <div class="btn-area"><button class="btn-navy nextSec" data-next="e" id="btnToE" disabled>다음 →</button></div>
-      </div>
-      <!-- e. 수수료 -->
-      <div class="card fsec hidden" id="fe">
-        <h2>수수료</h2>
-        <div class="learn"><b class="t">📖 알아보기 — 수수료는 왜 낼까?</b>
-        심사관이 내 발명을 검토하고 서류를 관리하는 데 돈이 들기 때문에, 출원할 때 나라에 <b>수수료</b>를 내요. 그런데 나라는 어린이·학생 발명가를 응원하려고 <b>수수료를 면제</b>해 주는 제도를 만들었어요.</div>
-        <p class="desc">✏️ <b>해보기</b> — 아래에서 나에게 해당하는 것을 <b>모두 체크</b>하고 금액이 어떻게 변하는지 보세요.</p>
-        <table class="fee-table">
-          <tr><th>출원료</th><td><b class="money">56,000</b> 원</td></tr>
-        </table>
-        <label class="exempt" id="ex1"><input type="checkbox"> 초·중등교육법 제2조에 따른 학교의 재학생</label>
-        <label class="exempt" id="ex2"><input type="checkbox"> 6세 이상 19세 미만인 사람</label>
-        <table class="fee-table" style="margin-top:16px">
-          <tr><th>면제후 수수료</th><td><span id="feeFinal">56,000 원</span> <span id="feeMsg" style="font-size:14.5px; color:#789; margin-left:10px"></span></td></tr>
-        </table>
-        <div class="notice" id="feeNotice" style="display:none">🎉 학생 발명가는 나라가 수수료를 <b>전부 면제</b>해 줘요! 여러분의 발명을 응원한다는 뜻이에요.</div>
-        <div class="btn-area"><button class="btn-navy" id="btnSign" disabled>작성완료 및 전자서명 ✍️</button></div>
+        <div class="notice" style="margin-top:14px">모든 항목을 채웠다면 오른쪽 위 <b>[작성완료 및 서명]</b> 버튼이 반짝일 거예요!</div>
       </div>
     </div>
   </div>
@@ -319,6 +557,7 @@
       <tr><th>접수일시</th><td id="rDate"></td></tr>
       <tr><th>발명의 명칭</th><td id="rTitle"></td></tr>
       <tr><th>출원인</th><td id="rName"></td></tr>
+      <tr><th>제출서류</th><td id="rFile"></td></tr>
       <tr><th>수수료</th><td id="rFee"></td></tr>
     </table>
     <div style="text-align:center; margin:14px 0 4px"><span class="stamp">접수완료</span></div>
@@ -365,6 +604,13 @@
     <span class="opt">명세서</span>
     <div class="fb"></div>
   </div>
+  <div class="quiz" data-a="1">
+    <h3>Q5. 19세 미만 발명가가 진짜로 출원할 때 꼭 필요한 사람은 누구일까요?</h3>
+    <span class="opt">담임 선생님</span>
+    <span class="opt">부모님 (법정대리인)</span>
+    <span class="opt">대통령</span>
+    <div class="fb"></div>
+  </div>
   <div class="card hidden" id="quizDone" style="text-align:center">
     <h2>🏅 오늘의 체험 완료!</h2>
     <p class="desc" style="margin:10px 0 18px">명세서 쓰기부터 전자출원까지, 진짜 발명가가 하는 일을 모두 해냈어요.<br>다음에 진짜 발명품이 생기면 오늘 배운 순서 그대로 도전해 보아요!</p>
@@ -372,7 +618,7 @@
   </div>
 </section>
 
-<!-- 팝업 -->
+<!-- 작은 팝업 -->
 <div id="popupWrap" class="hidden">
   <div id="popup">
     <div class="p-head" id="pHead"></div>
@@ -381,12 +627,22 @@
   </div>
 </div>
 
+<!-- 큰 모달 -->
+<div id="modalWrap" class="hidden">
+  <div id="modal">
+    <div class="m-head"><span id="mHead"></span><span class="x" id="mClose">✕</span></div>
+    <div class="m-body" id="mBody"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
 <script>
 const $ = s => document.querySelector(s);
 const qs = new URLSearchParams(location.search);
-const state = { nick: '', custNo: '', title: qs.get('title') || '', fileName: '' };
+const state = { nick: '', custNo: '', rrn: '', title: qs.get('title') || '', fileName: '', exempt: false, signed: false };
 
-// 팝업
+// ---------- 공용 UI ----------
 let pCallback = null;
 function popup(head, body, cb) {
   $('#pHead').textContent = head;
@@ -400,18 +656,37 @@ $('#pBtn').addEventListener('click', () => {
   if (pCallback) { const f = pCallback; pCallback = null; f(); }
 });
 
-// 진행 표시 + 화면 전환
+let mOnClose = null;
+function modal(head, bodyHTML, onClose) {
+  $('#mHead').textContent = head;
+  $('#mBody').innerHTML = bodyHTML;
+  $('#modalWrap').classList.remove('hidden');
+  mOnClose = onClose || null;
+}
+function closeModal() {
+  $('#modalWrap').classList.add('hidden');
+  if (mOnClose) { const f = mOnClose; mOnClose = null; f(); }
+}
+$('#mClose').addEventListener('click', closeModal);
+
+let toastTimer = null;
+function toast(msg) {
+  $('#toast').textContent = msg;
+  $('#toast').classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => $('#toast').classList.remove('show'), 2200);
+}
+
 function go(n) {
   [0,1,2,3,4,5,6].forEach(i => {
     const el = $('#s' + i);
     if (el) el.classList.toggle('hidden', i !== n);
   });
   $('#progress').classList.toggle('hidden', n === 0);
-  const cur = n === 4 ? 3 : n; // 화면4(작성)도 진행 ③
   document.querySelectorAll('#progress div').forEach(d => {
     const p = +d.dataset.p;
-    d.classList.toggle('on', p === cur);
-    d.classList.toggle('done', p < cur);
+    d.classList.toggle('on', p === n);
+    d.classList.toggle('done', p < n);
   });
   window.scrollTo(0, 0);
 }
@@ -438,6 +713,12 @@ $('#btnGate').addEventListener('click', async () => {
     if (!r.ok) { $('#gateMsg').textContent = j.error || '확인에 실패했어요. 다시 시도해 주세요.'; return; }
     $('#gateMsg').textContent = '';
     $('#inNick').value = nick;
+    // 체험용 가상 주민번호 (초등학생 또래 생년 + 마스킹)
+    const yy = 13 + Math.floor(Math.random() * 3);
+    const mm = String(1 + Math.floor(Math.random() * 12)).padStart(2, '0');
+    const dd = String(1 + Math.floor(Math.random() * 28)).padStart(2, '0');
+    state.rrn = `${yy}${mm}${dd}-${Math.random() < .5 ? 3 : 4}●●●●●●`;
+    $('#inRrn').value = state.rrn;
     go(1);
     $('#inNick').focus();
   } catch {
@@ -445,12 +726,11 @@ $('#btnGate').addEventListener('click', async () => {
   } finally { $('#btnGate').disabled = false; }
 });
 
-// ---------- 화면1: 특허고객번호 ----------
-
+// ---------- 화면1: 특허고객번호 (실명확인) ----------
 $('#btnCheck').addEventListener('click', () => {
   if (!$('#inNick').value.trim()) { $('#inNick').focus(); return; }
   popup('특허고객번호 발급여부 확인',
-    '<b style="color:var(--navy)">✓ 확인 결과</b><br>기존에 발급된 특허고객번호가 없습니다.<br>계속해서 특허고객번호 부여신청을 진행할 수 있어요.',
+    '<b style="color:var(--navy)">✓ 특허고객번호 발급여부 확인결과</b><br><br>- 기존 발급된 특허고객번호가 없습니다. 계속해서 특허고객번호부여신청을 진행할 수 있습니다.',
     () => { $('#btnIssue').disabled = false; $('#btnIssue').focus(); });
 });
 $('#inNick').addEventListener('keydown', e => { if (e.key === 'Enter') $('#btnCheck').click(); });
@@ -463,47 +743,251 @@ $('#btnIssue').addEventListener('click', () => {
   popup('특허고객번호 발급 완료',
     `<b style="color:var(--navy)">${state.nick}</b> 님의 특허고객번호가 발급되었어요.<br>
      <div style="text-align:center; font-size:24px; font-weight:bold; color:var(--red); margin:14px 0; letter-spacing:2px">${state.custNo}</div>
-     이 번호로 로그인해서 출원을 진행해요.`,
+     이 번호로 로그인해서 출원을 진행해요. 번호는 평생 한 번만 발급받아요!`,
     () => go(2));
 });
 
 // ---------- 화면2: 로그인 ----------
+function loginSuccess() {
+  $('#utilRight').innerHTML = `<b>${state.nick}</b> <span style="color:#99a">${state.custNo}</span> [미반환수수료 <b style="color:var(--red)">0</b>건] [미수신통지서 <b style="color:var(--red)">0</b>건] · 로그아웃 · 인증서관리`;
+  popup('로그인', `<b style="color:var(--ok)">✓ 로그인 성공!</b> 환영합니다, <b>${state.nick}</b> 님.<br>화면 맨 위에 내 특허고객번호가 표시된 것을 확인해 보세요.`, () => go(3));
+}
+
 document.querySelectorAll('[data-login]').forEach(b => b.addEventListener('click', () => {
-  popup('로그인', `<b>${b.dataset.login}</b>(으)로 본인 확인 중...<br><br><b style="color:var(--ok)">✓ 로그인 성공!</b> 환영합니다, ${state.nick} 님.`, () => {
-    $('#userBox').innerHTML = `<b>${state.nick}</b> 님 | 특허고객번호 ${state.custNo}<br><span style="color:#999">미반환수수료 0건 · 미수신통지서 0건</span>`;
-    go(3);
-  });
+  const kind = b.dataset.login;
+  if (kind === 'cert') showCertModal();
+  else if (kind === 'simple') showSimpleModal();
+  else popup('디지털원패스', `디지털원패스 아이디로 본인 확인 중...<br><br><b style="color:var(--ok)">✓ 인증 성공!</b>`, loginSuccess);
 }));
 
-// ---------- 화면3: 특허 선택 ----------
+// 공동인증서 — 인증서 선택창
+function showCertModal() {
+  modal('인증서 선택창', `
+    <div class="cert-banner">Magic Line 4 Web <small>(연습장 흉내 창이에요)</small></div>
+    <b style="font-size:14px; color:#334">인증서 저장 위치 선택</b>
+    <div class="cert-locs" style="margin-top:8px">
+      <div><span class="ico">🌐</span>브라우저</div>
+      <div class="on"><span class="ico">💽</span>하드디스크<br>(이동식)</div>
+      <div><span class="ico">🔑</span>보안토큰</div>
+      <div><span class="ico">📱</span>휴대전화</div>
+      <div><span class="ico">🛡️</span>스마트인증</div>
+    </div>
+    <b style="font-size:14px; color:#334">사용할 인증서 선택</b>
+    <div class="cert-list" style="margin-top:8px">
+      <div class="h"><span>소유자명</span><span>용도</span><span>발급기관</span><span>만료일</span></div>
+      <div class="r sel"><span>${state.nick}</span><span>체험용</span><span>특허로 연습장</span><span>2099-12-31</span></div>
+    </div>
+    <b style="font-size:14px; color:#334">인증서 비밀번호 입력</b>
+    <input type="password" id="certPw" placeholder="비밀번호는 대소문자를 구분합니다" style="width:100%; margin:8px 0 4px">
+    <div id="certMsg" style="min-height:20px; font-size:13.5px; color:var(--red)"></div>
+    <div style="text-align:center; display:flex; gap:8px; justify-content:center; margin-top:6px">
+      <button class="btn-blue" id="certOk" style="padding:10px 34px">확인</button>
+      <button class="btn-line" id="certCancel" style="padding:8px 24px; font-size:14px">취소</button>
+    </div>
+    <p style="font-size:13px; color:#889; margin-top:12px">💡 진짜 사이트에서는 컴퓨터에 저장된 인증서를 고르고 비밀번호를 넣어요. 연습장에서는 <b>아무 비밀번호나 4글자 이상</b> 넣으면 통과!</p>`);
+  $('#certPw').focus();
+  $('#certPw').addEventListener('keydown', e => { if (e.key === 'Enter') $('#certOk').click(); });
+  $('#certCancel').addEventListener('click', closeModal);
+  $('#certOk').addEventListener('click', () => {
+    if ($('#certPw').value.length < 4) { $('#certMsg').textContent = '비밀번호를 4글자 이상 입력해 주세요. (아무거나 괜찮아요)'; $('#certPw').focus(); return; }
+    closeModal();
+    loginSuccess();
+  });
+}
+
+// 간편인증
+function showSimpleModal() {
+  const APPS = [
+    ['TALK', '#fee500', '#3c1e1e', '카카오톡'], ['PASS', '#e6007e', '#fff', '통신사PASS'], ['Kb', '#ffb300', '#5c3c00', 'KB국민은행'],
+    ['Pass', '#1428a0', '#fff', '삼성패스'], ['N', '#03c75a', '#fff', '네이버'], ['신한', '#0046ff', '#fff', '신한은행']
+  ];
+  modal('간편인증 (앱으로 로그인하기)', `
+    <p style="margin-bottom:12px">본인 확인에 사용할 앱을 골라 주세요.</p>
+    <div style="display:flex; gap:10px; justify-content:center; margin-bottom:8px">
+      ${APPS.map((a, i) => `<div style="text-align:center; cursor:pointer" class="sApp" data-i="${i}">
+        <span style="display:flex; width:52px; height:52px; border-radius:50%; background:${a[1]}; color:${a[2]}; align-items:center; justify-content:center; font-size:13px; font-weight:bold; margin:0 auto 6px">${a[0]}</span>
+        <span style="font-size:12px; color:#556">${a[3]}</span></div>`).join('')}
+    </div>
+    <div id="simpleMsg" style="text-align:center; min-height:26px; font-size:15px; color:var(--navy); margin-top:10px"></div>`);
+  document.querySelectorAll('.sApp').forEach(el => el.addEventListener('click', () => {
+    const name = APPS[+el.dataset.i][3];
+    $('#simpleMsg').innerHTML = `📱 <b>${name}</b> 앱으로 인증 요청을 보냈어요... 휴대폰에서 승인을 눌러 주세요.`;
+    setTimeout(() => {
+      $('#simpleMsg').innerHTML = `<b style="color:var(--ok)">✓ ${name} 인증 성공!</b>`;
+      setTimeout(() => { closeModal(); loginSuccess(); }, 700);
+    }, 1600);
+  }));
+}
+
+// ---------- 화면3: 메인 → 신청/제출 메뉴 ----------
+let menuArmed = false;
+function armMenu() {
+  menuArmed = true;
+  $('#menuApply').classList.add('clickable');
+}
+// s3 진입 시 메뉴 활성화
+const _origGo = go;
+go = function(n) { _origGo(n); if (n === 3) armMenu(); };
+
+$('#menuApply').addEventListener('click', () => {
+  if (!menuArmed) return;
+  $('#menuApply').classList.remove('clickable');
+  $('#menuApply').classList.add('on');
+  $('#menuHint').classList.add('hidden');
+  $('#applyPanel').classList.remove('hidden');
+  $('#applyPanel').scrollIntoView({ behavior: 'smooth' });
+});
+
+$('#btnWebWrite').addEventListener('click', () => {
+  $('#typePick').classList.remove('hidden');
+  $('#typePick').scrollIntoView({ behavior: 'smooth' });
+});
+
+document.querySelectorAll('.t-off').forEach(b => b.addEventListener('click', () => {
+  toast('우리가 만든 것은 발명 아이디어! "특허"를 골라요 😊');
+}));
+
 $('#btnPatent').addEventListener('click', () => {
   $('#apName').textContent = state.nick;
   $('#apNo').textContent = state.custNo;
+  $('#ivName').textContent = state.nick;
+  $('#ivNo').textContent = state.custNo;
   if (state.title) $('#inTitle').value = state.title;
   go(4);
 });
 
 // ---------- 화면4: 출원서 작성 ----------
+const SECS = ['ref','a','guard','agent','b','c','lang','prio','e','d'];
 function showSec(k) {
-  ['a','b','c','d','e'].forEach(x => $('#f' + x).classList.toggle('hidden', x !== k));
+  SECS.forEach(x => { const el = $('#f' + x); if (el) el.classList.toggle('hidden', x !== k); });
   document.querySelectorAll('#sideNav div').forEach(d => d.classList.toggle('on', d.dataset.sec === k));
-  const inp = { b: '#inTitle' }[k];
-  if (inp) $(inp).focus();
+  if (k === 'b') $('#inTitle').focus();
+  window.scrollTo(0, 0);
 }
+document.querySelectorAll('#sideNav div').forEach(d => d.addEventListener('click', () => showSec(d.dataset.sec)));
 document.querySelectorAll('.nextSec').forEach(b => b.addEventListener('click', () => {
   const cur = b.closest('.fsec').id.slice(1);
   if (cur === 'b' && !$('#inTitle').value.trim()) { $('#inTitle').focus(); return; }
-  document.querySelector(`#sideNav div[data-sec="${cur}"]`).classList.add('done');
+  const nav = document.querySelector(`#sideNav div[data-sec="${cur}"]`);
+  if (nav) nav.classList.add('done');
   showSec(b.dataset.next);
+  checkReady();
 }));
 $('#inTitle').addEventListener('keydown', e => { if (e.key === 'Enter') document.querySelector('#fb .nextSec').click(); });
 
-$('#btnSameInventor').addEventListener('click', () => {
-  $('#inventorDone').classList.remove('hidden');
-  $('#btnToD').disabled = false;
-  $('#btnToD').focus();
+// 발명자 추가 모달
+$('#btnAddInventor').addEventListener('click', () => {
+  modal('발명자 추가 *', `
+    <div class="radio-row" style="margin-bottom:14px">
+      <label><input type="radio" name="ivKind" checked> 특허고객번호가 있는 경우</label>
+      <label><input type="radio" name="ivKind"> 특허고객번호가 없는 경우</label>
+    </div>
+    <div class="gov-row">
+      <label style="width:120px">특허고객번호</label>
+      <input readonly value="${state.custNo}" style="width:220px; background:#f4f6f9; text-align:center">
+      <button class="btn-blue" id="ivSame">출원인과 동일</button>
+      <button class="btn-line" style="font-size:14px; padding:8px 16px" id="ivSearch">검색</button>
+    </div>
+    <p style="font-size:13px; color:#a55; line-height:1.7; margin:10px 0">
+      1. 발명자(고안자·창작자)가 특허고객번호를 부여받은 경우에는 번호를 입력하시기 바랍니다.<br>
+      2. 발명자(고안자·창작자)는 자연인만 입력이 가능합니다.</p>
+    <div class="learn" style="margin:0"><b class="t">📖 왜 "출원인과 동일"일까?</b>
+    내가 발명하고(발명자) 내가 신청하니까(출원인) 두 역할을 모두 내가 해요. 그래서 <b>[출원인과 동일]</b> 버튼 하나면 끝!</div>
+    <div style="text-align:center; margin-top:14px; display:flex; gap:8px; justify-content:center">
+      <button class="btn-line" id="ivCancel" style="font-size:14px">취소</button>
+      <button class="btn-navy" id="ivApply" style="padding:10px 30px" disabled>적용</button>
+    </div>`);
+  $('#ivCancel').addEventListener('click', closeModal);
+  $('#ivSearch').addEventListener('click', () => toast('연습장에서는 [출원인과 동일]을 눌러 보세요!'));
+  $('#ivSame').addEventListener('click', () => {
+    $('#ivSame').textContent = '✓ 출원인과 동일';
+    $('#ivSame').style.background = 'var(--ok)';
+    $('#ivApply').disabled = false;
+    $('#ivApply').focus();
+  });
+  $('#ivApply').addEventListener('click', () => {
+    closeModal();
+    $('#inventorEmpty').classList.add('hidden');
+    $('#inventorRow').classList.remove('hidden');
+    $('#btnToLang').disabled = false;
+    document.querySelector('#sideNav div[data-sec="c"]').classList.add('done');
+    toast('발명자가 등록되었어요 ✓');
+    checkReady();
+  });
 });
 
+// 수수료 — 면제감면대상 모달
+const EXEMPTS = [
+  '국민기초생활 보장법 제12조의3에 따른 의료급여 수급자',
+  '국가유공자 등 예우 및 지원에 관한 법률에 따른 국가유공자와 그 유족 및 가족',
+  '5·18민주유공자예우에 관한 법률에 따른 5·18민주유공자와 그 유족 및 가족',
+  '국가보훈 대상자 지원에 관한 법률에 따른 보훈보상대상자, 그 유족 또는 가족',
+  '장애인 복지법 제29조 제1항의 규정에 의하여 등록된 장애인',
+  '초·중등교육법 제2조에 따른 학교의 재학생',
+  '국가',
+  '6세 이상 19세 미만인 자',
+  '병역법 제5조 제1항 제1호에 따른 현역병',
+  '독립유공자예우에 관한 법률에 따른 독립유공자와 그 유족 및 가족'
+];
+const RIGHT = [5, 7]; // 학생, 6세 이상 19세 미만
+
+$('#btnExempt').addEventListener('click', openExempt);
+$('#btnFeeTable').addEventListener('click', () => popup('요금표',
+  '특허 출원료(전자출원): <b>56,000원</b> 안팎<br>심사청구료: 청구항 수에 따라 별도<br><br>어른 발명가는 이만큼 내야 해요. 하지만 학생은…? 면제감면대상을 확인해 보세요! 😉'));
+
+function openExempt() {
+  modal('수수료 면제/감면 유형', `
+    <p style="font-size:13.5px; color:#a55; margin-bottom:10px">※ 수수료의 면제 및 감면을 받을 수 있는 출원인인 경우 해당 사유를 체크하고 <b>대상출원인수</b>를 입력하세요.</p>
+    <p style="font-size:14px; color:#334; margin-bottom:6px">✏️ <b>해보기</b> — 이 중에 <b>나에게 해당하는 것 2개</b>를 찾아 체크해 보세요!</p>
+    <div style="display:flex; font-size:12.5px; color:#667; font-weight:bold; border-bottom:2px solid #334; padding:6px 4px"><span>면제/감면 사유</span><span style="margin-left:auto">대상출원인수</span></div>
+    ${EXEMPTS.map((t, i) => `<label class="ex-item"><input type="checkbox" data-i="${i}"><span>${t}</span><input class="cnt" value="0" readonly></label>`).join('')}
+    <div id="exMsg" style="min-height:24px; font-size:14px; margin-top:10px; line-height:1.6"></div>
+    <div style="text-align:center; display:flex; gap:8px; justify-content:center; margin-top:6px">
+      <button class="btn-line" id="exCancel" style="font-size:14px">취소</button>
+      <button class="btn-navy" id="exApply" style="padding:10px 34px">적용</button>
+    </div>`);
+  const boxes = document.querySelectorAll('#mBody .ex-item input[type=checkbox]');
+  boxes.forEach(cb => cb.addEventListener('change', () => {
+    const item = cb.closest('.ex-item');
+    const i = +cb.dataset.i;
+    if (cb.checked && !RIGHT.includes(i)) {
+      cb.checked = false;
+      $('#exMsg').innerHTML = '<span style="color:var(--red)">🤔 그건 우리에게 해당하지 않아요. 잘 읽고 다시 찾아보세요!</span>';
+      return;
+    }
+    item.classList.toggle('hit', cb.checked);
+    item.querySelector('.cnt').value = cb.checked ? '1' : '0';
+    const picked = [...boxes].filter(b => b.checked).length;
+    $('#exMsg').innerHTML = picked === 2
+      ? '<span style="color:var(--ok); font-weight:bold">✓ 둘 다 찾았어요! [적용]을 눌러요.</span>'
+      : (picked === 1 ? '<span style="color:var(--navy)">하나 더 있어요! 나이와 관련된 것을 찾아보세요.</span>' : '');
+  }));
+  $('#exCancel').addEventListener('click', closeModal);
+  $('#exApply').addEventListener('click', () => {
+    const picked = [...boxes].filter(b => b.checked).length;
+    if (picked < 2) { $('#exMsg').innerHTML = '<span style="color:var(--red)">아직 2개를 다 찾지 못했어요!</span>'; return; }
+    closeModal();
+    popup('www.patent.go.kr 내용:',
+      `입력하신 면제/감면 사유 및 대상출원인수는 다음과 같습니다.<br><br>
+       학생 : 1 명<br>만 6세 이상 만 19세 미만인 자 : 1 명<br><br>입력하시려면 확인버튼을 클릭하세요.`,
+      applyExempt);
+  });
+}
+
+function applyExempt() {
+  state.exempt = true;
+  $('#exReason').innerHTML = '<b>학생[1], 만 6세 이상 만 19세 미만인 자[1]</b>';
+  $('#exReason').style.color = '#223';
+  $('#feeFinal').textContent = '0';
+  $('#feeFinal').style.color = 'var(--ok)';
+  $('#feeMsg').textContent = '(전액 면제!)';
+  $('#feeNotice').style.display = 'block';
+  $('#btnToD').disabled = false;
+  document.querySelector('#sideNav div[data-sec="e"]').classList.add('done');
+  checkReady();
+}
+
+// 첨부서류
 $('#filePick').addEventListener('click', () => $('#fileInput').click());
 $('#fileInput').addEventListener('change', e => {
   const f = e.target.files[0];
@@ -511,36 +995,81 @@ $('#fileInput').addEventListener('change', e => {
   state.fileName = f.name;
   $('#filePick').textContent = '📄 ' + f.name + ' — 첨부 완료 ✓';
   $('#filePick').classList.add('picked');
-  $('#btnToE').disabled = false;
-  $('#btnToE').focus();
+  document.querySelector('#sideNav div[data-sec="d"]').classList.add('done');
+  checkReady();
 });
 
-// 수수료 면제
-function updateFee() {
-  const c1 = $('#ex1 input').checked, c2 = $('#ex2 input').checked;
-  $('#ex1').classList.toggle('checked', c1);
-  $('#ex2').classList.toggle('checked', c2);
-  const free = c1 && c2;
-  $('#feeFinal').textContent = free ? '0 원' : '56,000 원';
-  $('#feeFinal').classList.toggle('free', free);
-  $('#feeMsg').textContent = free ? '(전액 면제!)' : '';
-  $('#feeNotice').style.display = free ? 'block' : 'none';
-  $('#btnSign').disabled = !free;
-}
-$('#ex1 input').addEventListener('change', updateFee);
-$('#ex2 input').addEventListener('change', updateFee);
+// 상단 버튼들
+$('#btnTempSave').addEventListener('click', () => toast('💾 임시저장 되었습니다. (특허청 서버에 임시저장 — 흉내예요)'));
+$('#btnFormList').addEventListener('click', () => toast('연습장에서는 특허출원서 한 가지만 작성해요.'));
+$('#btnLocal').addEventListener('click', () => toast('진짜 사이트에서는 PC에 저장해 둔 서식을 불러올 수 있어요.'));
+$('#btnSample').addEventListener('click', () => toast('진짜 사이트에서는 작성 예시를 보여 줘요.'));
+$('#btnAuth').addEventListener('click', () => popup('작성 권한 관리',
+  `작성권한을 넘기기 전에 지금까지 입력한 내용을 반드시 저장하시기 바랍니다.<br><br>
+   <table class="fee-table"><tr><th style="width:60px">선택</th><th>성명(명칭)</th><th>특허고객번호</th></tr>
+   <tr><td style="text-align:center">☑</td><td>${state.nick || '(로그인 필요)'}</td><td>${state.custNo || '-'}</td></tr></table>
+   변리사님 같은 다른 사람에게 서류 작성을 넘길 때 쓰는 기능이에요. 우리는 스스로 쓰니까 그대로 두면 돼요.`));
+$('#btnPreview').addEventListener('click', () => popup('미리보기',
+  `<b>특허출원서</b><br><br>
+   · 출원인: <b>${state.nick}</b> (${state.custNo})<br>
+   · 발명의 명칭: <b>${$('#inTitle').value.trim() || '(아직 안 썼어요)'}</b><br>
+   · 발명자: <b>${$('#inventorRow').classList.contains('hidden') ? '(아직 등록 안 했어요)' : state.nick}</b><br>
+   · 출원언어: 국어<br>
+   · 수수료: <b>${state.exempt ? '0원 (학생 면제)' : '56,000원'}</b><br>
+   · 명세서: <b>${state.fileName || '(아직 첨부 안 했어요)'}</b>`));
 
-// 전자서명 → 접수
+// 작성완료 및 서명
+function ready() {
+  return $('#inTitle').value.trim() && !$('#inventorRow').classList.contains('hidden') && state.exempt && state.fileName;
+}
+function checkReady() {
+  if (ready()) { $('#btnSign').style.animation = 'blink 1.2s infinite'; $('#btnSign').style.outline = '3px dashed var(--amber)'; $('#btnSign').style.outlineOffset = '-3px'; }
+}
 $('#btnSign').addEventListener('click', () => {
+  if (!ready()) {
+    const missing = [];
+    if (!$('#inTitle').value.trim()) missing.push('발명의 명칭');
+    if ($('#inventorRow').classList.contains('hidden')) missing.push('발명자');
+    if (!state.exempt) missing.push('수수료(면제감면대상)');
+    if (!state.fileName) missing.push('첨부서류(명세서)');
+    popup('아직 완성되지 않았어요', `왼쪽 목록에서 다음 항목을 마저 채워 주세요.<br><br>· <b>${missing.join('</b><br>· <b>')}</b>`);
+    return;
+  }
   popup('작성완료 및 전자서명',
     `제출할 내용을 확인해 주세요.<br><br>
      · 발명의 명칭: <b>${$('#inTitle').value.trim()}</b><br>
      · 출원인·발명자: <b>${state.nick}</b><br>
      · 명세서: <b>${state.fileName}</b><br>
      · 수수료: <b style="color:var(--ok)">0원 (학생 면제)</b><br><br>
-     확인을 누르면 <b>${state.nick}</b> 이름으로 전자서명하고 제출해요. ✍️`,
-    submit);
+     확인을 누르면 인증서로 <b>전자서명</b>을 해요. ✍️`,
+    signAndSubmit);
 });
+
+function signAndSubmit() {
+  modal('전자서명 — 인증서 선택창', `
+    <div class="cert-banner">Magic Line 4 Web <small>(연습장 흉내 창이에요)</small></div>
+    <div class="cert-list">
+      <div class="h"><span>소유자명</span><span>용도</span><span>발급기관</span><span>만료일</span></div>
+      <div class="r sel"><span>${state.nick}</span><span>체험용</span><span>특허로 연습장</span><span>2099-12-31</span></div>
+    </div>
+    <b style="font-size:14px; color:#334">인증서 비밀번호 입력</b>
+    <input type="password" id="signPw" placeholder="아까 정한 비밀번호 (4글자 이상 아무거나)" style="width:100%; margin:8px 0 4px">
+    <div id="signMsg" style="min-height:20px; font-size:13.5px; color:var(--red)"></div>
+    <div class="learn" style="margin:8px 0"><b class="t">📖 전자서명이란?</b>
+    종이에 도장을 찍듯, 인터넷에서 "이 서류는 내가 낸 것이 맞아요"라고 인증서로 도장 찍는 거예요.</div>
+    <div style="text-align:center; display:flex; gap:8px; justify-content:center">
+      <button class="btn-blue" id="signOk" style="padding:10px 34px">서명하고 제출 ✍️</button>
+      <button class="btn-line" id="signCancel" style="padding:8px 24px; font-size:14px">취소</button>
+    </div>`);
+  $('#signPw').focus();
+  $('#signPw').addEventListener('keydown', e => { if (e.key === 'Enter') $('#signOk').click(); });
+  $('#signCancel').addEventListener('click', closeModal);
+  $('#signOk').addEventListener('click', () => {
+    if ($('#signPw').value.length < 4) { $('#signMsg').textContent = '비밀번호를 4글자 이상 입력해 주세요.'; $('#signPw').focus(); return; }
+    closeModal();
+    submit();
+  });
+}
 
 function submit() {
   const n = String(Math.floor(Math.random() * 9000000) + 1000000);
@@ -550,7 +1079,8 @@ function submit() {
   $('#rTitle').textContent = $('#inTitle').value.trim();
   $('#rName').textContent = state.nick;
   $('#rName2').textContent = state.nick;
-  $('#rFee').innerHTML = '0원 <span style="color:var(--ok); font-weight:bold">(학생 전액 면제)</span>';
+  $('#rFile').textContent = `특허출원서, 명세서(${state.fileName})`;
+  $('#rFee').innerHTML = '0원 <span style="color:var(--ok); font-weight:bold">(학생·만 6세 이상 19세 미만 전액 면제)</span>';
   go(5);
 }
 
