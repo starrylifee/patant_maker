@@ -70,7 +70,11 @@ let slides = [], cur = 0;
 async function load(pw) {
   $('#status').textContent = '슬라이드를 만들고 있어요...';
   try {
-    const body = studentMode ? { sessionId: sid } : { password: pw, sessionId: sid };
+    const ttok = sessionStorage.getItem('ttok');
+    const body = studentMode ? { sessionId: sid }
+      : pw ? { password: pw, sessionId: sid }
+      : ttok ? { idToken: ttok, sessionId: sid }
+      : { sessionId: sid };
     const r = await fetch('/api/slides', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
@@ -79,7 +83,7 @@ async function load(pw) {
     if (r.status === 401 && !studentMode) { askPw('비밀번호가 틀렸어요.'); return; }
     if (r.status === 423) { askRetry(j.error); return; }
     if (!r.ok) throw new Error(j.error || '오류가 났어요.');
-    if (!studentMode) sessionStorage.setItem('tpw', pw);
+    if (!studentMode && pw) sessionStorage.setItem('tpw', pw);
     build(j);
   } catch (e) {
     $('#status').textContent = e.message;
@@ -210,6 +214,7 @@ $('#deck').addEventListener('click', e => {
 if (!sid) $('#status').textContent = '학생 정보가 없어요. 명세서 메이커의 ③단계에서 열어 주세요.';
 else if (studentMode) load();
 else if (sessionStorage.getItem('tpw')) load(sessionStorage.getItem('tpw'));
+else if (sessionStorage.getItem('ttok')) load();
 else askPw();
 </script>
 </body>
