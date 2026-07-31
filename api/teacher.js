@@ -91,6 +91,22 @@ module.exports = async (req, res) => {
       });
     }
 
+    if (action === 'deleteStudent') {
+      const sessionId = String(req.body.sessionId || '');
+      if (!sessionId) return res.status(400).json({ error: '학생 정보가 없어요.' });
+      const sRef = db().collection('sessions').doc(sessionId);
+      for (const sub of ['media', 'events']) {
+        const docs = (await sRef.collection(sub).get()).docs;
+        while (docs.length) {
+          const batch = db().batch();
+          docs.splice(0, 400).forEach(d => batch.delete(d.ref));
+          await batch.commit();
+        }
+      }
+      await sRef.delete();
+      return res.status(200).json({ ok: true });
+    }
+
     if (action === 'events') {
       const sessionId = String(req.body.sessionId || '');
       const snap = await db().collection('sessions').doc(sessionId).collection('events').orderBy('ts', 'asc').get();
