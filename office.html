@@ -618,6 +618,23 @@
   </div>
 </section>
 
+<!-- 단계 비밀번호 관문 -->
+<div id="stagePwWrap" class="hidden" style="position:fixed; inset:0; background:rgba(0,0,0,.55); display:flex; align-items:center; justify-content:center; z-index:70">
+  <div style="background:#fff; border-radius:8px; width:480px; overflow:hidden; box-shadow:0 18px 50px rgba(0,0,0,.3)">
+    <div style="background:var(--navy); color:#fff; font-size:17.5px; font-weight:bold; padding:13px 20px">🔒 선생님 확인</div>
+    <div style="padding:24px; font-size:16px; line-height:1.8; text-align:center">
+      <b id="spStage" style="color:var(--blue)"></b> 단계는 선생님 설명을 듣고 가는 곳이에요.<br>
+      선생님이 알려주는 <b>비밀번호</b>를 입력하세요.
+      <input id="spInput" autocomplete="off" style="display:block; width:80%; margin:16px auto 0; font-size:20px; text-align:center; border:2px solid var(--line); border-radius:6px; padding:10px">
+      <div id="spMsg" style="color:var(--red); font-size:14px; min-height:20px; margin-top:8px"></div>
+    </div>
+    <div style="text-align:center; padding:0 0 20px">
+      <button class="btn-navy" id="spBtn" style="padding:10px 40px">확인</button>
+      <button class="btn-line" id="spCancel" style="padding:8px 22px; font-size:14px; margin-left:8px">돌아가기</button>
+    </div>
+  </div>
+</div>
+
 <!-- 작은 팝업 -->
 <div id="popupWrap" class="hidden">
   <div id="popup">
@@ -677,7 +694,45 @@ function toast(msg) {
   toastTimer = setTimeout(() => $('#toast').classList.remove('show'), 2200);
 }
 
+// ---------- 단계 비밀번호 관문 ----------
+let stageLocks = [];
+const unlockedStages = new Set(JSON.parse(sessionStorage.getItem('officeUnlocked') || '[]'));
+const STAGE_NAMES = { 2: '② 로그인', 3: '③ 메뉴 찾아가기', 4: '④ 출원서 작성', 5: '⑤ 제출 완료', 6: '⑥ 배운 내용 정리' };
+let pendingStage = null;
+
 function go(n) {
+  if (stageLocks.includes(n) && !unlockedStages.has(n)) {
+    pendingStage = n;
+    $('#spStage').textContent = STAGE_NAMES[n] || `${n}번`;
+    $('#spInput').value = ''; $('#spMsg').textContent = '';
+    $('#stagePwWrap').classList.remove('hidden');
+    $('#spInput').focus();
+    return;
+  }
+  realGo(n);
+}
+$('#spInput').addEventListener('keydown', e => { if (e.key === 'Enter') $('#spBtn').click(); });
+$('#spCancel').addEventListener('click', () => $('#stagePwWrap').classList.add('hidden'));
+$('#spBtn').addEventListener('click', async () => {
+  const pw = $('#spInput').value.trim();
+  if (!pw) { $('#spInput').focus(); return; }
+  $('#spBtn').disabled = true;
+  try {
+    const r = await fetch('/api/office', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'verifyStage', stage: pendingStage, pw })
+    });
+    const j = await r.json().catch(() => ({}));
+    if (!r.ok) { $('#spMsg').textContent = j.error || '비밀번호가 달라요.'; $('#spInput').select(); return; }
+    unlockedStages.add(pendingStage);
+    sessionStorage.setItem('officeUnlocked', JSON.stringify([...unlockedStages]));
+    $('#stagePwWrap').classList.add('hidden');
+    realGo(pendingStage);
+  } catch { $('#spMsg').textContent = '인터넷 연결을 확인해 주세요.'; }
+  finally { $('#spBtn').disabled = false; }
+});
+
+function realGo(n) {
   [0,1,2,3,4,5,6].forEach(i => {
     const el = $('#s' + i);
     if (el) el.classList.toggle('hidden', i !== n);
@@ -712,6 +767,7 @@ $('#btnGate').addEventListener('click', async () => {
     if (r.status === 423) { $('#gateMsg').textContent = ''; $('#gateLocked').classList.remove('hidden'); return; }
     if (!r.ok) { $('#gateMsg').textContent = j.error || '확인에 실패했어요. 다시 시도해 주세요.'; return; }
     $('#gateMsg').textContent = '';
+    stageLocks = j.locks || [];
     $('#inNick').value = nick;
     // 체험용 가상 주민번호 (초등학생 또래 생년 + 마스킹)
     const yy = 13 + Math.floor(Math.random() * 3);
